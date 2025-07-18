@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../src/generated/prisma"  <-- comment out or remove this line
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model PowerMeter {
+  id                        Int      @id @default(autoincrement())
+  treatment_pond            Float?
+  wastewater_pump_building1 Float?
+  wastewater_pump_building2 Float?
+  recorded_at               DateTime @default(now())
+
+  @@map("power_meters")
+}
+
+model WaterMeter {
+  id           Int      @id @default(autoincrement())
+  water_in     Float?
+  water_out    Float?
+  recorded_at  DateTime @default(now())
+
+  @@map("water_meters")
+}
+
+model BuildingWaterMeter {
+  id                          Int      @id @default(autoincrement())
+  air_cooling_water_building2 Float?
+  water_usage_building2       Float?
+  reused_treated_water        Float?
+  drinking_water              Float?
+  air_cooling_water_building1 Float?
+  water_usage_building1       Float?
+  recorded_at                 DateTime @default(now())
+
+  @@map("building_water_meters")
+}
+
+model MonthlyValue {
+  id     Int     @id @default(autoincrement())
+  value  Float
+  tag    String
+
+  @@map("monthly_values")
+}
+
+model ValueThreshold {
+  id        Int     @id @default(autoincrement())
+  max       Float
+  min       Float?
+  colorMax  String
+  colorMin  String?
+  tag       String
+
+  @@map("value_thresholds")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  password   String
+  createdAt  DateTime @default(now())
+
+  @@map("users")  // ชื่อจริงใน DB
+}
+
+model AlarmLog {
+  id         Int      @id @default(autoincrement())
+  location   String
+  event      String   @default("Unknown")  // กำหนด default ค่า
+  status     String
+  created_at DateTime @default(now())
+
+  @@map("alarm_log")
+}
