@@ -14,7 +14,7 @@ export default function Page() {
   });
 
   useEffect(() => {
-    const socket = new WebSocket("ws://192.168.1.35:1880/ws/meter1");
+    const socket = new WebSocket("ws://172.16.0.71:1880/ws/meter1");
 
     socket.addEventListener("message", (event) => {
       const res = JSON.parse(event.data);
@@ -134,7 +134,7 @@ export default function Page() {
       {/* กราฟ */}
       <div className="flex justify-center w-full scroll-wrapper rounded-md shadow bg-zinc-900">
         <VoltageChart
-          ws="ws://192.168.1.35:1880/ws/meter1"
+          ws="ws://172.16.0.71:1880/ws/meter1"
           minmaxUrl="/api/threshold?tag=บ่อสูบน้ำเสียอาคาร 2"
         />
       </div>
