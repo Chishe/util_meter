@@ -1,0 +1,3903 @@
+[
+    {
+        "id": "3ad1f59be65d94d1",
+        "type": "tab",
+        "label": "NEW META",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "668f28ef169e9bf2",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Log 07:00",
+        "func": "var now = new Date();\nvar hours = now.getHours();\nvar minutes = now.getMinutes();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar yesterday = new Date(now);\nyesterday.setDate(now.getDate() - 1);\nvar dateYesterday = `${yesterday.getDate()}/${yesterday.getMonth() + 1}/${yesterday.getFullYear()}`;\n\nvar timeTrigger = hours + minutes / 100;\nvar targetTime = 7.00;\n\nvar dateToday = `${day}/${month}/${year}`;\n\nvar kwh_treatment_pond = global.get(\"kwh_treatment_pond\") || 0;\nvar kwh_wastewater_pump_building1 = global.get(\"kwh_wastewater_pump_building1\") || 0;\nvar kwh_wastewater_pump_building2 = global.get(\"kwh_wastewater_pump_building2\") || 0;\n\nvar state = context.get(\"state\") || 0;\nvar lastRunDay = context.get(\"lastRunDay\") || null;\n\nif (lastRunDay !== day) {\n    context.set(\"state\", 0);\n    context.set(\"lastRunDay\", day);\n    state = 0;\n}\n\n\nif (timeTrigger >= targetTime && timeTrigger < (targetTime + 0.01)) {\n    if (state === 0) {\n        msg.query = `\n            INSERT INTO power_meters \n            (treatment_pond, wastewater_pump_building1, wastewater_pump_building2) \n            VALUES \n            ('${kwh_treatment_pond}', '${kwh_wastewater_pump_building1}', '${kwh_wastewater_pump_building2}');\n        `;\n        context.set(\"state\", 1);\n        return msg;\n    }\n}\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1020,
+        "y": 100,
+        "wires": [
+            [
+                "539fd9fa8818e8f6"
+            ]
+        ]
+    },
+    {
+        "id": "539fd9fa8818e8f6",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "power_meters",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1240,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "739bdd0b70b70b53",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Log 07:00",
+        "func": "var now = new Date();\nvar hours = now.getHours();\nvar minutes = now.getMinutes();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\n\nvar yesterday = new Date(now);\nyesterday.setDate(now.getDate() - 1);\nvar dateYesterday = `${yesterday.getDate()}/${yesterday.getMonth() + 1}/${yesterday.getFullYear()}`;\n\n\nvar timeTrigger = hours + minutes / 100;\nvar targetTime = 7.00;\n\nvar dateToday = `${day}/${month}/${year}`;\n\nvar water_in = global.get(\"water_in\") || 0;\nvar water_out = global.get(\"water_out\") || 0;\n\nvar state = context.get(\"state\") || 0;\nvar lastRunDay = context.get(\"lastRunDay\") || null;\n\nif (lastRunDay !== day) {\n    context.set(\"state\", 0);\n    context.set(\"lastRunDay\", day);\n    state = 0;\n}\n\n\nif (timeTrigger >= targetTime && timeTrigger < (targetTime + 0.01)) {\n    if (state === 0) {\n        msg.query = `\n            INSERT INTO water_meters \n            (water_in, water_out) \n            VALUES \n            ('${water_in}', '${water_out}');\n        `;\n        context.set(\"state\", 1);\n        return msg;\n    }\n}\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1020,
+        "y": 160,
+        "wires": [
+            [
+                "c043d8dfc15f2d27"
+            ]
+        ]
+    },
+    {
+        "id": "c043d8dfc15f2d27",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "water_meters",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1240,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3a904e14919c7e3f",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Log 07:00",
+        "func": "var now = new Date();\nvar hours = now.getHours();\nvar minutes = now.getMinutes();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\n\nvar yesterday = new Date(now);\nyesterday.setDate(now.getDate() - 1);\nvar dateYesterday = `${yesterday.getDate()}/${yesterday.getMonth() + 1}/${yesterday.getFullYear()}`;\n\n\nvar timeTrigger = hours + minutes / 100;\nvar targetTime = 7.00;\n\nvar dateToday = `${day}/${month}/${year}`;\n\nvar air_cooling_water_building2 = global.get(\"air_cooling_water_building2\") || 0;\nvar water_usage_building2 = global.get(\"water_usage_building2\") || 0;\nvar reused_treated_water = global.get(\"reused_treated_water\") || 0;\nvar drinking_water = global.get(\"drinking_water\") || 0;\nvar air_cooling_water_building1 = global.get(\"air_cooling_water_building1\") || 0;\nvar water_usage_building1 = global.get(\"water_usage_building1\") || 0;\n\nvar state = context.get(\"state\") || 0;\nvar lastRunDay = context.get(\"lastRunDay\") || null;\n\nif (lastRunDay !== day) {\n    context.set(\"state\", 0);\n    context.set(\"lastRunDay\", day);\n    state = 0;\n}\n\n\nif (timeTrigger >= targetTime && timeTrigger < (targetTime + 0.01)) {\n    if (state === 0) {\n        msg.query = `\n            INSERT INTO building_water_meters \n            (air_cooling_water_building2, water_usage_building2 ,reused_treated_water ,drinking_water ,air_cooling_water_building1 ,water_usage_building1) \n            VALUES \n            ('${air_cooling_water_building2}', '${water_usage_building2}', '${reused_treated_water}', '${drinking_water}', '${air_cooling_water_building1}', '${water_usage_building1}');\n        `;\n        context.set(\"state\", 1);\n        return msg;\n    }\n}\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1020,
+        "y": 220,
+        "wires": [
+            [
+                "9c106b1a386417f8"
+            ]
+        ]
+    },
+    {
+        "id": "9c106b1a386417f8",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "building_water_meters",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1260,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "41ac04f3b61776f2",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 850,
+        "y": 100,
+        "wires": [
+            [
+                "668f28ef169e9bf2"
+            ]
+        ]
+    },
+    {
+        "id": "b64203307948210c",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 850,
+        "y": 160,
+        "wires": [
+            [
+                "739bdd0b70b70b53"
+            ]
+        ]
+    },
+    {
+        "id": "b364adc3ba3920fc",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 850,
+        "y": 220,
+        "wires": [
+            [
+                "3a904e14919c7e3f"
+            ]
+        ]
+    },
+    {
+        "id": "6aa5af09acaa3f0f",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "DATA LOG : METER",
+        "info": "",
+        "x": 870,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "8fe3f5493d46297c",
+        "type": "modbus-response",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "registerShowMax": 20,
+        "x": 290,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "bf8da9fd2da15e5c",
+        "type": "modbus-response",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "registerShowMax": 20,
+        "x": 290,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "2a97f86f740a3154",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "water_usage_building2",
+        "func": "let m3;\nlet m3_1 = msg.payload[1];\nlet m3_2 = msg.payload[0];\n\nm3_2 = m3_2 * 65536;\n\nm3 = m3_2 + m3_1;\n\nm3 = m3 / 100;\n\nglobal.set(\"water_usage_building2\", m3);\n\nmsg.payload = {\n    m3: global.get(\"water_usage_building2\")\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 460,
+        "wires": [
+            [
+                "5b84fc296ec1d470"
+            ]
+        ]
+    },
+    {
+        "id": "fe9dc8687140773f",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "air_cooling_water_building2",
+        "func": "let m3;\nlet m3_1 = msg.payload[1];\nlet m3_2 = msg.payload[0];\n\nm3_2 = m3_2 * 65536;\n\nm3 = m3_2 + m3_1;\n\nm3 = m3/100;\n\nglobal.set(\"air_cooling_water_building2\", m3);\n\nmsg.payload = {\n    m3: global.get(\"air_cooling_water_building2\")\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 340,
+        "wires": [
+            [
+                "377ccee012740e9b"
+            ]
+        ]
+    },
+    {
+        "id": "b0cc3ec52564d1c0",
+        "type": "modbus-response",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "registerShowMax": 20,
+        "x": 290,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "f9e4e3c7b15ddd01",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "drinking_water",
+        "func": "let m3;\nlet m3_1 = msg.payload[1];\nlet m3_2 = msg.payload[0];\n\nm3_2 = m3_2 * 65536;\n\nm3 = m3_2 + m3_1;\n\nm3 = m3/100;\n\nglobal.set(\"drinking_water\", m3);\n\nmsg.payload = {\n    m3: global.get(\"drinking_water\")\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 700,
+        "wires": [
+            [
+                "c1163a591adfcf85",
+                "f2a698fb3ad4d785"
+            ]
+        ]
+    },
+    {
+        "id": "af7d132b7faa60f3",
+        "type": "modbus-response",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "registerShowMax": 20,
+        "x": 290,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "fada65e01a5f3f8a",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "reused_treated_water",
+        "func": "let m3;\nlet m3_1 = msg.payload[1];\nlet m3_2 = msg.payload[0];\n\nm3_2 = m3_2 * 65536;\n\nm3 = m3_2 + m3_1;\n\nm3 = m3/100;\n\nglobal.set(\"reused_treated_water\", m3);\n\nmsg.payload = {\n    m3: global.get(\"reused_treated_water\")\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 580,
+        "wires": [
+            [
+                "9f604a87e0bfa9e3"
+            ]
+        ]
+    },
+    {
+        "id": "443a41d3a4301d9b",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "น้ำดื่ม",
+        "info": "",
+        "x": 450,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "43f815353a3be5dd",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "น้ำบำบัดกลับมาใช้ใหม่",
+        "info": "",
+        "x": 490,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "17b7431e50cca593",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "น้ำใช้อาคาร 2",
+        "info": "",
+        "x": 470,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "f6fd839a3c70bd8b",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "น้ำแอร์รังผึ้งอาคาร 2 : water1",
+        "info": "",
+        "x": 510,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "98c4ec082d9eb68e",
+        "type": "modbus-response",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "registerShowMax": 20,
+        "x": 290,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "a9c2c77fa2e33c85",
+        "type": "modbus-response",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "registerShowMax": 20,
+        "x": 290,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "6e60aae6dbd5d597",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "air_cooling_water_building1",
+        "func": "let m3;\nlet m3_1 = msg.payload[1];\nlet m3_2 = msg.payload[0];\n\nm3_2 = m3_2 * 65536;\n\nm3 = m3_2 + m3_1;\n\nm3 = m3 / 100;\n\nglobal.set(\"air_cooling_water_building1\", m3);\n\nmsg.payload = {\n    m3: global.get(\"air_cooling_water_building1\")\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 820,
+        "wires": [
+            [
+                "4322b746df48b068"
+            ]
+        ]
+    },
+    {
+        "id": "915b7af78dc5bd26",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "water_usage_building1",
+        "func": "let m3;\nlet m3_1 = msg.payload[1];\nlet m3_2 = msg.payload[0];\n\nm3_2 = m3_2 * 65536;\n\nm3 = m3_2 + m3_1;\n\nm3 = m3/100;\n\nglobal.set(\"water_usage_building1\", m3);\n\nmsg.payload = {\n    m3: global.get(\"water_usage_building1\")\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 940,
+        "wires": [
+            [
+                "fed08c9092197d76"
+            ]
+        ]
+    },
+    {
+        "id": "fd258f86bb82f2b1",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "น้ำแอร์รังผึ้งอาคาร 1",
+        "info": "",
+        "x": 490,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "9fd1b874c2a738fe",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "น้ำใช้อาคาร 1",
+        "info": "",
+        "x": 470,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "b1449160389e3406",
+        "type": "http request",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2270,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "347306bae70c6b98",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "แจ้งเตือน : น้ำใช้อาคาร 2",
+        "func": "var sendStatus = global.get(\"sendStatus\");\nvar now = new Date();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar hours = now.getHours();\nvar minutes = now.getMinutes().toString().padStart(2, '0');\nvar seconds = now.getSeconds().toString().padStart(2, '0');\nvar currentDateAndTime = \"วันที่ \" + day + \"/\" + month + \"/\" + year + \" เวลา \" + hours + \":\" + minutes + \":\" + seconds;\n\nvar max_water_usage_b2 = global.get(\"max_water_usage_b2\") || 0;\nvar max = max_water_usage_b2;\nvar m3 = global.get(\"water_usage_building2\") - global.get(\"yesterday_water_usage_b2\");\nvar alarm_water_usage_building_2 = global.get(\"alarm_water_usage_building_2\");\n\n\n\nvar state = context.get(\"state\") || 0;\n\nif (m3 > max) {\n    if (alarm_water_usage_building_2 === 1) {\n        return null;\n    }\n    var lineMessage = `🚨 แจ้งเตือนการใช้น้ำเกินกำหนด\\nมิเตอร์: น้ำใช้อาคาร 2 \\n: ${currentDateAndTime}\\nปริมาณ: ${m3} m³`;\n\n\n    var token = 'jKkmtfGaSxAFdQB9LreuYoewgtrkugTlAAG78pW1aG7yQ45dd1+IqNfTh8H0gItKEzw0K/nFQ5CPNIFoUQ5cvuIKgXYz+jj+yn8qtxfWsL2F/1Z4iWyatOS9HcblH81q5FyTueICaj9GM+Ijy2F/hwdB04t89/1O/w1cDnyilFU=';\n    msg.headers = {\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer ' + token\n    };\n\n    var groupId = \"C73c4c23f6a46099ef66118de65aa2513\";\n\n    if (state === 0) {\n        context.set(\"state\", 1);\n        msg.payload = {\n            to: groupId,\n            messages: [\n                {\n                    type: \"text\",\n                    text: lineMessage\n                }\n            ]\n        };\n        node.send(msg);\n\n        if (!context.get(\"timer\")) {\n            var timer = setInterval(() => {\n                msg.payload = {\n                    to: groupId,\n                    messages: [\n                        {\n                            type: \"text\",\n                            text: lineMessage\n                        }\n                    ]\n                };\n                node.send(msg);\n            }, 120000);\n            context.set(\"timer\", timer);\n        }\n    }\n} else {\n    context.set(\"state\", 0);\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}\n\nif (msg.reset) {\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1880,
+        "y": 400,
+        "wires": [
+            [
+                "b1449160389e3406"
+            ]
+        ]
+    },
+    {
+        "id": "0e67ce2335b71e70",
+        "type": "http request",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2270,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ac771b8932f53957",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "แจ้งเตือน : น้ำแอร์รังผึ้งอาคาร 2",
+        "func": "var sendStatus = global.get(\"sendStatus\");\nvar now = new Date();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar hours = now.getHours();\nvar minutes = now.getMinutes().toString().padStart(2, '0');\nvar seconds = now.getSeconds().toString().padStart(2, '0');\nvar currentDateAndTime = \"วันที่ \" + day + \"/\" + month + \"/\" + year + \" เวลา \" + hours + \":\" + minutes + \":\" + seconds;\n\nvar max = global.set(\"max_cooling_water_b2\");\nvar m3 = global.get(\"air_cooling_water_building2\") - global.get(\"yesterday_cooling_water_b2\")\nvar alarm_cooling_water_building_2 = global.get(\"alarm_cooling_water_building_2\")\n\n\nvar state = context.get(\"state\") || 0;\n\nif (m3 > max) {\n    if (alarm_cooling_water_building_2 === 1) {\n        return null;\n    }\n    var lineMessage = `🚨 แจ้งเตือนการใช้น้ำเกินกำหนด\\nมิเตอร์: น้ำแอร์รังผึ้งอาคาร 2\\n: ${currentDateAndTime}\\nปริมาณ: ${m3} m³`;\n\n        \"\\m³ : \" + m3 \n    var token = 'jKkmtfGaSxAFdQB9LreuYoewgtrkugTlAAG78pW1aG7yQ45dd1+IqNfTh8H0gItKEzw0K/nFQ5CPNIFoUQ5cvuIKgXYz+jj+yn8qtxfWsL2F/1Z4iWyatOS9HcblH81q5FyTueICaj9GM+Ijy2F/hwdB04t89/1O/w1cDnyilFU=';\n    msg.headers = {\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer ' + token\n    };\n\n    var groupId = \"C73c4c23f6a46099ef66118de65aa2513\";\n\n    // เช็คสถานะ state\n    if (state === 0) {\n        context.set(\"state\", 1);\n        msg.payload = {\n            to: groupId,\n            messages: [\n                {\n                    type: \"text\",\n                    text: lineMessage\n                }\n            ]\n        };\n        node.send(msg);\n\n        // ตั้ง Timer เพื่อส่งข้อความซ้ำทุก 2 นาที\n        if (!context.get(\"timer\")) {\n            var timer = setInterval(() => {\n                msg.payload = {\n                    to: groupId,\n                    messages: [\n                        {\n                            type: \"text\",\n                            text: lineMessage\n                        }\n                    ]\n                };\n                node.send(msg);\n            }, 120000); // 120,000 ms = 2 นาที\n            context.set(\"timer\", timer);\n        }\n    }\n} else {\n    // หากไม่มีการแจ้งเตือนให้รีเซ็ต state และหยุด Timer\n    context.set(\"state\", 0);\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}\n\n// รีเซ็ตด้วย msg.reset\nif (msg.reset) {\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1900,
+        "y": 460,
+        "wires": [
+            [
+                "0e67ce2335b71e70"
+            ]
+        ]
+    },
+    {
+        "id": "2dcc54a50fc075df",
+        "type": "http request",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2270,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6ef0b40fa2722911",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "แจ้งเตือน : น้ำบำบัดกลับมาใช้ใหม่",
+        "func": "var sendStatus = global.get(\"sendStatus\");\nvar now = new Date();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar hours = now.getHours();\nvar minutes = now.getMinutes().toString().padStart(2, '0');\nvar seconds = now.getSeconds().toString().padStart(2, '0');\nvar currentDateAndTime = \"วันที่ \" + day + \"/\" + month + \"/\" + year + \" เวลา \" + hours + \":\" + minutes + \":\" + seconds;\n\nvar max = global.get(\"max_reused_water\")\nvar m3 = global.get(\"reused_treated_water\") - global.get(\"yesterday_reused_water\")\nvar alarm_reused_treated_water = global.get(\"alarm_reused_treated_water\")\n\n\nvar state = context.get(\"state\") || 0;\n\nif (m3 > max) {\n    if (alarm_reused_treated_water === 1) {\n        return null;\n    }\n    var lineMessage = `🚨 แจ้งเตือนการใช้น้ำเกินกำหนด\\nมิเตอร์: น้ำบำบัดกลับมาใช้ใหม่\\n: ${currentDateAndTime}\\nปริมาณ: ${m3} m³`;\n    var token = 'jKkmtfGaSxAFdQB9LreuYoewgtrkugTlAAG78pW1aG7yQ45dd1+IqNfTh8H0gItKEzw0K/nFQ5CPNIFoUQ5cvuIKgXYz+jj+yn8qtxfWsL2F/1Z4iWyatOS9HcblH81q5FyTueICaj9GM+Ijy2F/hwdB04t89/1O/w1cDnyilFU=';\n    msg.headers = {\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer ' + token\n    };\n\n    var groupId = \"C73c4c23f6a46099ef66118de65aa2513\";\n\n    // เช็คสถานะ state\n    if (state === 0) {\n        context.set(\"state\", 1);\n        msg.payload = {\n            to: groupId,\n            messages: [\n                {\n                    type: \"text\",\n                    text: lineMessage\n                }\n            ]\n        };\n        node.send(msg);\n\n        // ตั้ง Timer เพื่อส่งข้อความซ้ำทุก 2 นาที\n        if (!context.get(\"timer\")) {\n            var timer = setInterval(() => {\n                msg.payload = {\n                    to: groupId,\n                    messages: [\n                        {\n                            type: \"text\",\n                            text: lineMessage\n                        }\n                    ]\n                };\n                node.send(msg);\n            }, 120000); // 120,000 ms = 2 นาที\n            context.set(\"timer\", timer);\n        }\n    }\n} else {\n    // หากไม่มีการแจ้งเตือนให้รีเซ็ต state และหยุด Timer\n    context.set(\"state\", 0);\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}\n\n// รีเซ็ตด้วย msg.reset\nif (msg.reset) {\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1910,
+        "y": 520,
+        "wires": [
+            [
+                "2dcc54a50fc075df"
+            ]
+        ]
+    },
+    {
+        "id": "9cb60735c74197a9",
+        "type": "http request",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2270,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "af9f8b442b2d3f75",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "แจ้งเตือน : น้ำดื่ม",
+        "func": "var sendStatus = global.get(\"sendStatus\");\nvar now = new Date();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar hours = now.getHours();\nvar minutes = now.getMinutes().toString().padStart(2, '0');\nvar seconds = now.getSeconds().toString().padStart(2, '0');\nvar currentDateAndTime = \"วันที่ \" + day + \"/\" + month + \"/\" + year + \" เวลา \" + hours + \":\" + minutes + \":\" + seconds;\n\nvar max = global.get(\"max_drinking_water\");\nvar m3 = global.get(\"drinking_water\") - global.get(\"yesterday_drinking_water\")\nvar alarm_drinking_water = global.get(\"alarm_drinking_water\")\n\n\n\nvar state = context.get(\"state\") || 0;\n\nif (m3 > max) {\n    if (alarm_drinking_water === 1) {\n        return null;\n    }\n    var lineMessage = `🚨 แจ้งเตือนการใช้น้ำเกินกำหนด\\nมิเตอร์: น้ำดื่ม\\n: ${currentDateAndTime}\\nปริมาณ: ${m3} m³`;\n\n        \"\\m³ : \" + m3 \n    var token = 'jKkmtfGaSxAFdQB9LreuYoewgtrkugTlAAG78pW1aG7yQ45dd1+IqNfTh8H0gItKEzw0K/nFQ5CPNIFoUQ5cvuIKgXYz+jj+yn8qtxfWsL2F/1Z4iWyatOS9HcblH81q5FyTueICaj9GM+Ijy2F/hwdB04t89/1O/w1cDnyilFU=';\n    msg.headers = {\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer ' + token\n    };\n\n    var groupId = \"C73c4c23f6a46099ef66118de65aa2513\";\n\n    // เช็คสถานะ state\n    if (state === 0) {\n        context.set(\"state\", 1);\n        msg.payload = {\n            to: groupId,\n            messages: [\n                {\n                    type: \"text\",\n                    text: lineMessage\n                }\n            ]\n        };\n        node.send(msg);\n\n        // ตั้ง Timer เพื่อส่งข้อความซ้ำทุก 2 นาที\n        if (!context.get(\"timer\")) {\n            var timer = setInterval(() => {\n                msg.payload = {\n                    to: groupId,\n                    messages: [\n                        {\n                            type: \"text\",\n                            text: lineMessage\n                        }\n                    ]\n                };\n                node.send(msg);\n            }, 120000); // 120,000 ms = 2 นาที\n            context.set(\"timer\", timer);\n        }\n    }\n} else {\n    // หากไม่มีการแจ้งเตือนให้รีเซ็ต state และหยุด Timer\n    context.set(\"state\", 0);\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}\n\n// รีเซ็ตด้วย msg.reset\nif (msg.reset) {\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1860,
+        "y": 580,
+        "wires": [
+            [
+                "9cb60735c74197a9"
+            ]
+        ]
+    },
+    {
+        "id": "eed63a021710c61f",
+        "type": "http request",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2270,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "61267c48cdcd95e8",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "แจ้งเตือน : น้ำแอร์รังผึ้งอาคาร 1",
+        "func": "var sendStatus = global.get(\"sendStatus\");\nvar now = new Date();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar hours = now.getHours();\nvar minutes = now.getMinutes().toString().padStart(2, '0');\nvar seconds = now.getSeconds().toString().padStart(2, '0');\nvar currentDateAndTime = \"วันที่ \" + day + \"/\" + month + \"/\" + year + \" เวลา \" + hours + \":\" + minutes + \":\" + seconds;\n\nvar max = global.get(\"yesterday_cooling_water_b1\");\nvar m3 = global.get(\"air_cooling_water_building1\") - global.get(\"yesterday_cooling_water_b1\")\nvar alarm_cooling_water_building_1 = global.get(\"alarm_cooling_water_building_1\")\n\n\nvar state = context.get(\"state\") || 0;\n\nif (m3 > max) {\n    if (alarm_cooling_water_building_1 === 1) {\n        return null;\n    }\n\n    var lineMessage = `🚨 แจ้งเตือนการใช้น้ำเกินกำหนด\\nมิเตอร์: น้ำแอร์รังผึ้งอาคาร 1\\n: ${currentDateAndTime}\\nปริมาณ: ${m3} m³`;\n\n        \"\\m³ : \" + m3 \n    var token = 'jKkmtfGaSxAFdQB9LreuYoewgtrkugTlAAG78pW1aG7yQ45dd1+IqNfTh8H0gItKEzw0K/nFQ5CPNIFoUQ5cvuIKgXYz+jj+yn8qtxfWsL2F/1Z4iWyatOS9HcblH81q5FyTueICaj9GM+Ijy2F/hwdB04t89/1O/w1cDnyilFU=';\n    msg.headers = {\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer ' + token\n    };\n\n    var groupId = \"C73c4c23f6a46099ef66118de65aa2513\";\n\n    // เช็คสถานะ state\n    if (state === 0) {\n        context.set(\"state\", 1);\n        msg.payload = {\n            to: groupId,\n            messages: [\n                {\n                    type: \"text\",\n                    text: lineMessage\n                }\n            ]\n        };\n        node.send(msg);\n\n        // ตั้ง Timer เพื่อส่งข้อความซ้ำทุก 2 นาที\n        if (!context.get(\"timer\")) {\n            var timer = setInterval(() => {\n                msg.payload = {\n                    to: groupId,\n                    messages: [\n                        {\n                            type: \"text\",\n                            text: lineMessage\n                        }\n                    ]\n                };\n                node.send(msg);\n            }, 120000); // 120,000 ms = 2 นาที\n            context.set(\"timer\", timer);\n        }\n    }\n} else {\n    // หากไม่มีการแจ้งเตือนให้รีเซ็ต state และหยุด Timer\n    context.set(\"state\", 0);\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}\n\n// รีเซ็ตด้วย msg.reset\nif (msg.reset) {\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1900,
+        "y": 640,
+        "wires": [
+            [
+                "eed63a021710c61f"
+            ]
+        ]
+    },
+    {
+        "id": "4ec995d80d920a25",
+        "type": "http request",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2270,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "68c7f9ae6332bd1d",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "แจ้งเตือน : น้ำใช้อาคาร 1",
+        "func": "var sendStatus = global.get(\"sendStatus\");\nvar now = new Date();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar hours = now.getHours();\nvar minutes = now.getMinutes().toString().padStart(2, '0');\nvar seconds = now.getSeconds().toString().padStart(2, '0');\nvar currentDateAndTime = \"วันที่ \" + day + \"/\" + month + \"/\" + year + \" เวลา \" + hours + \":\" + minutes + \":\" + seconds;\n\nvar max_water_usage_b2 = global.get(\"max_water_usage_b2\") || 0;\nvar m3 = global.get(\"water_usage_building1\") - global.get(\"yesterday_water_usage_b1\")\nvar alarm_water_usage_building_1 = global.get(\"alarm_water_usage_building_1\")\nvar max = max_water_usage_b2;\n\nvar state = context.get(\"state\") || 0;\n\nif (m3 > max) {\n    if (alarm_water_usage_building_1 === 1) {\n        return null;\n    }\n    var lineMessage = `🚨 แจ้งเตือนการใช้น้ำเกินกำหนด\\nมิเตอร์: น้ำใช้อาคาร 1\\n: ${currentDateAndTime}\\nปริมาณ: ${m3} m³`;\n\n        \"\\m³ : \" + m3 \n    var token = 'jKkmtfGaSxAFdQB9LreuYoewgtrkugTlAAG78pW1aG7yQ45dd1+IqNfTh8H0gItKEzw0K/nFQ5CPNIFoUQ5cvuIKgXYz+jj+yn8qtxfWsL2F/1Z4iWyatOS9HcblH81q5FyTueICaj9GM+Ijy2F/hwdB04t89/1O/w1cDnyilFU=';\n    msg.headers = {\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer ' + token\n    };\n\n    var groupId = \"C73c4c23f6a46099ef66118de65aa2513\";\n\n    // เช็คสถานะ state\n    if (state === 0) {\n        context.set(\"state\", 1);\n        msg.payload = {\n            to: groupId,\n            messages: [\n                {\n                    type: \"text\",\n                    text: lineMessage\n                }\n            ]\n        };\n        node.send(msg);\n\n        // ตั้ง Timer เพื่อส่งข้อความซ้ำทุก 2 นาที\n        if (!context.get(\"timer\")) {\n            var timer = setInterval(() => {\n                msg.payload = {\n                    to: groupId,\n                    messages: [\n                        {\n                            type: \"text\",\n                            text: lineMessage\n                        }\n                    ]\n                };\n                node.send(msg);\n            }, 120000); // 120,000 ms = 2 นาที\n            context.set(\"timer\", timer);\n        }\n    }\n} else {\n    // หากไม่มีการแจ้งเตือนให้รีเซ็ต state และหยุด Timer\n    context.set(\"state\", 0);\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}\n\n// รีเซ็ตด้วย msg.reset\nif (msg.reset) {\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1880,
+        "y": 700,
+        "wires": [
+            [
+                "4ec995d80d920a25"
+            ]
+        ]
+    },
+    {
+        "id": "f61db4dcb94153a9",
+        "type": "http request",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2270,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8f1c70dc82798cef",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "แจ้งเตือน : น้ำเข้า",
+        "func": "var sendStatus = global.get(\"sendStatus\");\nvar now = new Date();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar hours = now.getHours();\nvar minutes = now.getMinutes().toString().padStart(2, '0');\nvar seconds = now.getSeconds().toString().padStart(2, '0');\nvar currentDateAndTime = \"วันที่ \" + day + \"/\" + month + \"/\" + year + \" เวลา \" + hours + \":\" + minutes + \":\" + seconds;\n\nvar max_water_in = global.get(\"max_water_in\") || 0;\nvar m3 = global.get(\"water_in\") - global.get(\"yesterday_water_in\")\nvar alarm_water_in = global.get(\"alarm_water_in\")\nvar max = max_water_in;\n\nvar state = context.get(\"state\") || 0;\n\nif (m3 > max) {\n    if (alarm_water_in === 1) {\n        return null;\n    }\n    var lineMessage = `🚨 แจ้งเตือนการใช้น้ำเกินกำหนด\\nมิเตอร์: น้ำเข้า\\nเวลา: ${currentDateAndTime}\\nปริมาณ: ${m3} m³`;\n\n    var token = 'jKkmtfGaSxAFdQB9LreuYoewgtrkugTlAAG78pW1aG7yQ45dd1+IqNfTh8H0gItKEzw0K/nFQ5CPNIFoUQ5cvuIKgXYz+jj+yn8qtxfWsL2F/1Z4iWyatOS9HcblH81q5FyTueICaj9GM+Ijy2F/hwdB04t89/1O/w1cDnyilFU=';\n    msg.headers = {\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer ' + token\n    };\n\n    var groupId = \"C73c4c23f6a46099ef66118de65aa2513\";\n\n    if (state === 0) {\n        context.set(\"state\", 1);\n        msg.payload = {\n            to: groupId,\n            messages: [\n                {\n                    type: \"text\",\n                    text: lineMessage\n                }\n            ]\n        };\n        node.send(msg);\n\n        if (!context.get(\"timer\")) {\n            var timer = setInterval(() => {\n                msg.payload = {\n                    to: groupId,\n                    messages: [\n                        {\n                            type: \"text\",\n                            text: lineMessage\n                        }\n                    ]\n                };\n                node.send(msg);\n            }, 120000);\n            context.set(\"timer\", timer);\n        }\n    }\n} else {\n    context.set(\"state\", 0);\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}\n\nif (msg.reset) {\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1860,
+        "y": 280,
+        "wires": [
+            [
+                "f61db4dcb94153a9"
+            ]
+        ]
+    },
+    {
+        "id": "d5615f02f3ff6c73",
+        "type": "http request",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2270,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "04e3fae13b601dfe",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "แจ้งเตือน : น้ำออก",
+        "func": "var sendStatus = global.get(\"sendStatus\");\nvar now = new Date();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar hours = now.getHours();\nvar minutes = now.getMinutes().toString().padStart(2, '0');\nvar seconds = now.getSeconds().toString().padStart(2, '0');\nvar currentDateAndTime = \"วันที่ \" + day + \"/\" + month + \"/\" + year + \" เวลา \" + hours + \":\" + minutes + \":\" + seconds;\n\nvar max_water_out = global.get(\"max_water_out\") || 0;\nvar m3 = global.get(\"water_out\") - global.get(\"yesterday_water_out\")\nvar alarm_water_out = global.get(\"alarm_water_out\")\nvar max = max_water_out;\n\n\nvar state = context.get(\"state\") || 0;\n\nif (m3 > max) {\n    if (alarm_water_out === 1) {\n        return null;\n    }\n    var lineMessage = `🚨 แจ้งเตือนการใช้น้ำเกินกำหนด\\nมิเตอร์: น้ำออก\\nเวลา: ${currentDateAndTime}\\nปริมาณ: ${m3} m³`;\n    var token = 'jKkmtfGaSxAFdQB9LreuYoewgtrkugTlAAG78pW1aG7yQ45dd1+IqNfTh8H0gItKEzw0K/nFQ5CPNIFoUQ5cvuIKgXYz+jj+yn8qtxfWsL2F/1Z4iWyatOS9HcblH81q5FyTueICaj9GM+Ijy2F/hwdB04t89/1O/w1cDnyilFU=';\n    msg.headers = {\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer ' + token\n    };\n\n    var groupId = \"C73c4c23f6a46099ef66118de65aa2513\";\n\n    // เช็คสถานะ state\n    if (state === 0) {\n        context.set(\"state\", 1);\n        msg.payload = {\n            to: groupId,\n            messages: [\n                {\n                    type: \"text\",\n                    text: lineMessage\n                }\n            ]\n        };\n        node.send(msg);\n\n        // ตั้ง Timer เพื่อส่งข้อความซ้ำทุก 2 นาที\n        if (!context.get(\"timer\")) {\n            var timer = setInterval(() => {\n                msg.payload = {\n                    to: groupId,\n                    messages: [\n                        {\n                            type: \"text\",\n                            text: lineMessage\n                        }\n                    ]\n                };\n                node.send(msg);\n            }, 120000); // 120,000 ms = 2 นาที\n            context.set(\"timer\", timer);\n        }\n    }\n} else {\n    // หากไม่มีการแจ้งเตือนให้รีเซ็ต state และหยุด Timer\n    context.set(\"state\", 0);\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}\n\n// รีเซ็ตด้วย msg.reset\nif (msg.reset) {\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1870,
+        "y": 340,
+        "wires": [
+            [
+                "d5615f02f3ff6c73"
+            ]
+        ]
+    },
+    {
+        "id": "5167e9bf8d784c4b",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "LINE :WATER  METER",
+        "info": "",
+        "x": 1670,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "93b14020a03b7c97",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Voltage treatment_pond",
+        "func": "const hextoFloat = (bin) => {\n    bin = bin.padStart(32, '0');\n    const sign = bin[0] === '1' ? -1 : 1;\n    const exponent = parseInt(bin.slice(1, 9), 2) - 127;\n    const fractionBits = bin.slice(9);\n    let mantissa = 1;\n\n    for (let i = 0; i < fractionBits.length; i++) {\n        if (fractionBits[i] === '1') {\n            mantissa += 1 / (2 ** (i + 1));\n        }\n    }\n\n    return sign * mantissa * (2 ** exponent);\n};\n\nconst combineAndConvert = (v1, v2) => {\n    const hex = v1.toString(16).padStart(2, '0') + v2.toString(16).padStart(2, '0');\n    const bin = parseInt(hex, 16).toString(2).padStart(32, '0');\n    return parseFloat(hextoFloat(bin).toFixed(3));\n};\n\nconst voltage_R = combineAndConvert(msg.payload[0], msg.payload[1]);\nconst voltage_S = combineAndConvert(msg.payload[2], msg.payload[3]);\nconst voltage_T = combineAndConvert(msg.payload[4], msg.payload[5]);\n\nglobal.set(\"voltage_R_treatment_pond\", voltage_R);\nglobal.set(\"voltage_S_treatment_pond\", voltage_S);\nglobal.set(\"voltage_T_treatment_pond\", voltage_T);\n\nmsg.payload = { voltage_R, voltage_S, voltage_T };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 1020,
+        "wires": [
+            [
+                "6e8cda1c12f7786b"
+            ]
+        ]
+    },
+    {
+        "id": "f305832bfc6d03e3",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Voltage wastewater_pump_building1",
+        "func": "const hextoFloat = (bin) => {\n    bin = bin.padStart(32, '0'); \n    const sign = bin[0] === '1' ? -1 : 1;\n    const exponent = parseInt(bin.slice(1, 9), 2) - 127;\n    const fractionBits = bin.slice(9);\n    let mantissa = 1;\n\n    for (let i = 0; i < fractionBits.length; i++) {\n        if (fractionBits[i] === '1') {\n            mantissa += 1 / (2 ** (i + 1));\n        }\n    }\n\n    return sign * mantissa * (2 ** exponent);\n};\n\nconst combineAndConvert = (v1, v2) => {\n    const hex = v1.toString(16).padStart(2, '0') + v2.toString(16).padStart(2, '0');\n    const bin = parseInt(hex, 16).toString(2).padStart(32, '0');\n    return parseFloat(hextoFloat(bin).toFixed(3));\n};\n\nconst voltage_R = combineAndConvert(msg.payload[0], msg.payload[1]);\nconst voltage_S = combineAndConvert(msg.payload[2], msg.payload[3]);\nconst voltage_T = combineAndConvert(msg.payload[4], msg.payload[5]);\n\nglobal.set(\"voltage_R_wastewater_pump_building1\", voltage_R);\nglobal.set(\"voltage_S_wastewater_pump_building1\", voltage_S);\nglobal.set(\"voltage_T_wastewater_pump_building1\", voltage_T);\n\nmsg.payload = { voltage_R, voltage_S, voltage_T };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 1080,
+        "wires": [
+            [
+                "d1c2184d891b0330"
+            ]
+        ]
+    },
+    {
+        "id": "aa4a45f3c9a1846e",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Voltage wastewater_pump_building2",
+        "func": "const hextoFloat = (bin) => {\n    bin = bin.padStart(32, '0');\n    const sign = bin[0] === '1' ? -1 : 1;\n    const exponent = parseInt(bin.slice(1, 9), 2) - 127;\n    const fractionBits = bin.slice(9);\n    let mantissa = 1;\n\n    for (let i = 0; i < fractionBits.length; i++) {\n        if (fractionBits[i] === '1') {\n            mantissa += 1 / (2 ** (i + 1));\n        }\n    }\n\n    return sign * mantissa * (2 ** exponent);\n};\n\nconst combineAndConvert = (v1, v2) => {\n    const hex = v1.toString(16).padStart(2, '0') + v2.toString(16).padStart(2, '0');\n    const bin = parseInt(hex, 16).toString(2).padStart(32, '0');\n    return parseFloat(hextoFloat(bin).toFixed(3));\n};\n\nconst voltage_R = combineAndConvert(msg.payload[0], msg.payload[1]);\nconst voltage_S = combineAndConvert(msg.payload[2], msg.payload[3]);\nconst voltage_T = combineAndConvert(msg.payload[4], msg.payload[5]);\n\nglobal.set(\"voltage_R_wastewater_pump_building2\", voltage_R);\nglobal.set(\"voltage_S_wastewater_pump_building2\", voltage_S);\nglobal.set(\"voltage_T_wastewater_pump_building2\", voltage_T);\n\nmsg.payload = { voltage_R, voltage_S, voltage_T };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 1140,
+        "wires": [
+            [
+                "244b4f879b0ac94d"
+            ]
+        ]
+    },
+    {
+        "id": "5d385b5588f9481d",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "kWh treatment_pond",
+        "func": "const bytesToFloat = (word1, word2) => {\n    const buffer = new ArrayBuffer(4);\n    const view = new DataView(buffer);\n\n    view.setUint16(0, word1);\n    view.setUint16(2, word2);\n\n    return parseFloat(view.getFloat32(0)).toFixed(1);\n};\n\nconst kwh = parseFloat(bytesToFloat(msg.payload[0], msg.payload[1]));\n\nglobal.set(\"kwh_treatment_pond\", kwh);\nmsg.payload = { kwh };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 1200,
+        "wires": [
+            [
+                "93b6ac7ffbd042ca"
+            ]
+        ]
+    },
+    {
+        "id": "25d478e05b161866",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "kWh wastewater_pump_building1",
+        "func": "const bytesToFloat = (word1, word2) => {\n    const buffer = new ArrayBuffer(4);\n    const view = new DataView(buffer);\n\n    view.setUint16(0, word1);\n    view.setUint16(2, word2);\n\n    return parseFloat(view.getFloat32(0)).toFixed(1);\n};\n\nconst kwh = parseFloat(bytesToFloat(msg.payload[0], msg.payload[1]));\n\nglobal.set(\"kwh_wastewater_pump_building1\", kwh);\nmsg.payload = { kwh };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 1260,
+        "wires": [
+            [
+                "f26d428f5fa379e9"
+            ]
+        ]
+    },
+    {
+        "id": "6bd7605d6ab2fd5e",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "kWh wastewater_pump_building2",
+        "func": "const bytesToFloat = (word1, word2) => {\n    const buffer = new ArrayBuffer(4);\n    const view = new DataView(buffer);\n\n    view.setUint16(0, word1);\n    view.setUint16(2, word2);\n\n    return parseFloat(view.getFloat32(0)).toFixed(1);\n};\n\nconst kwh = parseFloat(bytesToFloat(msg.payload[0], msg.payload[1]));\n\nglobal.set(\"kwh_wastewater_pump_building2\", kwh);\nmsg.payload = { kwh };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 1320,
+        "wires": [
+            [
+                "5f54175c16af537a"
+            ]
+        ]
+    },
+    {
+        "id": "9c65a77b73efd3fa",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Current treatment_pond",
+        "func": "const hextoFloat = (bin) => {\n    bin = bin.padStart(32, '0');\n    const sign = bin[0] === '1' ? -1 : 1;\n    const exponent = parseInt(bin.slice(1, 9), 2) - 127;\n    const fractionBits = bin.slice(9);\n    let mantissa = 1;\n\n    for (let i = 0; i < fractionBits.length; i++) {\n        if (fractionBits[i] === '1') {\n            mantissa += 1 / (2 ** (i + 1));\n        }\n    }\n\n    return sign * mantissa * (2 ** exponent);\n};\n\nconst combineAndConvert = (v1, v2) => {\n    const hex = v1.toString(16).padStart(2, '0') + v2.toString(16).padStart(2, '0');\n    const bin = parseInt(hex, 16).toString(2).padStart(32, '0');\n    return parseFloat(hextoFloat(bin).toFixed(3));\n};\n\nconst Current_R = combineAndConvert(msg.payload[0], msg.payload[1]);\nconst Current_S = combineAndConvert(msg.payload[2], msg.payload[3]);\nconst Current_T = combineAndConvert(msg.payload[4], msg.payload[5]);\n\nglobal.set(\"Current_R_treatment_pond\", Current_R);\nglobal.set(\"Current_S_treatment_pond\", Current_S);\nglobal.set(\"Current_T_treatment_pond\", Current_T);\n\nmsg.payload = { Current_R, Current_S, Current_T };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 1380,
+        "wires": [
+            [
+                "b637d0f7bea42c91"
+            ]
+        ]
+    },
+    {
+        "id": "2b1c4a95493bd31c",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Current wastewater_pump_building1",
+        "func": "const hextoFloat = (bin) => {\n    bin = bin.padStart(32, '0'); \n    const sign = bin[0] === '1' ? -1 : 1;\n    const exponent = parseInt(bin.slice(1, 9), 2) - 127;\n    const fractionBits = bin.slice(9);\n    let mantissa = 1;\n\n    for (let i = 0; i < fractionBits.length; i++) {\n        if (fractionBits[i] === '1') {\n            mantissa += 1 / (2 ** (i + 1));\n        }\n    }\n\n    return sign * mantissa * (2 ** exponent);\n};\n\nconst combineAndConvert = (v1, v2) => {\n    const hex = v1.toString(16).padStart(2, '0') + v2.toString(16).padStart(2, '0');\n    const bin = parseInt(hex, 16).toString(2).padStart(32, '0');\n    return parseFloat(hextoFloat(bin).toFixed(3));\n};\n\nconst Current_R = combineAndConvert(msg.payload[0], msg.payload[1]);\nconst Current_S = combineAndConvert(msg.payload[2], msg.payload[3]);\nconst Current_T = combineAndConvert(msg.payload[4], msg.payload[5]);\n\nglobal.set(\"Current_R_wastewater_pump_building1\", Current_R);\nglobal.set(\"Current_S_wastewater_pump_building1\", Current_S);\nglobal.set(\"Current_T_wastewater_pump_building1\", Current_T);\n\nmsg.payload = { Current_R, Current_S, Current_T };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 1440,
+        "wires": [
+            [
+                "ec979716c296d983"
+            ]
+        ]
+    },
+    {
+        "id": "06df1d34d3cb80b4",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Current wastewater_pump_building2",
+        "func": "const hextoFloat = (bin) => {\n    bin = bin.padStart(32, '0');\n    const sign = bin[0] === '1' ? -1 : 1;\n    const exponent = parseInt(bin.slice(1, 9), 2) - 127;\n    const fractionBits = bin.slice(9);\n    let mantissa = 1;\n\n    for (let i = 0; i < fractionBits.length; i++) {\n        if (fractionBits[i] === '1') {\n            mantissa += 1 / (2 ** (i + 1));\n        }\n    }\n\n    return sign * mantissa * (2 ** exponent);\n};\n\nconst combineAndConvert = (v1, v2) => {\n    const hex = v1.toString(16).padStart(2, '0') + v2.toString(16).padStart(2, '0');\n    const bin = parseInt(hex, 16).toString(2).padStart(32, '0');\n    return parseFloat(hextoFloat(bin).toFixed(3));\n};\n\nconst Current_R = combineAndConvert(msg.payload[0], msg.payload[1]);\nconst Current_S = combineAndConvert(msg.payload[2], msg.payload[3]);\nconst Current_T = combineAndConvert(msg.payload[4], msg.payload[5]);\n\nglobal.set(\"Current_R_wastewater_pump_building2\", Current_R);\nglobal.set(\"Current_S_wastewater_pump_building2\", Current_S);\nglobal.set(\"Current_T_wastewater_pump_building2\", Current_T);\n\nmsg.payload = { Current_R, Current_S, Current_T };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 1500,
+        "wires": [
+            [
+                "1bbeea546ee069fa"
+            ]
+        ]
+    },
+    {
+        "id": "8321d53a0272876d",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "water_in",
+        "func": "let m3;\nlet m3_1 = msg.payload[7];\nlet m3_2 = msg.payload[8];\n\nm3_1 = m3_1 * 65536;\n\nm3 = m3_1 + m3_2;\n\nglobal.set(\"water_in\", m3);\n\nmsg.payload = {\n    m3: global.get(\"water_in\") - global.get(\"monthly_water_in\")\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 260,
+        "y": 100,
+        "wires": [
+            [
+                "ccc0c617284e4bf9"
+            ]
+        ]
+    },
+    {
+        "id": "f32280786bcb8d9d",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "water_out",
+        "func": "let m3;\nlet m3_1 = msg.payload[8];\nlet m3_2 = msg.payload[9];\n\nm3_1 = m3_1 * 65536;\n\nm3 = m3_1 + m3_2;\n\nglobal.set(\"water_out\", m3);\n\nmsg.payload = {\n    m3: global.get(\"water_out\")\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 260,
+        "y": 220,
+        "wires": [
+            [
+                "c1654f344bfca96a"
+            ]
+        ]
+    },
+    {
+        "id": "68f10755df96bdf9",
+        "type": "modbus-response",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "registerShowMax": 20,
+        "x": 290,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "50dbe7d16ffd13d1",
+        "type": "modbus-response",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "registerShowMax": 20,
+        "x": 290,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "1659f126723030e0",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "น้ำออก",
+        "info": "",
+        "x": 450,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "dfaf8d3c4d5e262c",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "น้ำเข้า",
+        "info": "",
+        "x": 450,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "62c3d29e8868010a",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "SET GLOBAL",
+        "func": "const data = msg.payload;\n\ndata.forEach(item => {\n    switch (item.tag) {\n        case 'น้ำใช้อาคาร 1':\n            global.set(\"monthly_water_usage_b1\", item.value);\n            break;\n        case 'น้ำดื่ม':\n            global.set(\"monthly_drinking_water\", item.value);\n            break;\n        case 'น้ำบำบัดกลับมาใช้ใหม่':\n            global.set(\"monthly_reused_water\", item.value);\n            break;\n        case 'น้ำใช้อาคาร 2':\n            global.set(\"monthly_water_usage_b2\", item.value);\n            break;\n        case 'น้ำแอร์รังผึ้งอาคาร 1':\n            global.set(\"monthly_cooling_water_b1\", item.value);\n            break;\n        case 'น้ำแอร์รังผึ้งอาคาร 2':\n            global.set(\"monthly_cooling_water_b2\", item.value);\n            break;\n        case 'บ่อบำบัด':\n            global.set(\"monthly_treatment_tank\", item.value);\n            break;\n        case 'บ่อสูบน้ำเสียอาคาร 1':\n            global.set(\"monthly_waste_pump_b1\", item.value);\n            break;\n        case 'บ่อสูบน้ำเสียอาคาร 2':\n            global.set(\"monthly_waste_pump_b2\", item.value);\n            break;\n        case 'น้ำเข้า':\n            global.set(\"monthly_water_in\", item.value);\n            break;\n        case 'น้ำออก':\n            global.set(\"monthly_water_out\", item.value);\n            break;\n        default:\n            let other = global.get(\"other_tags\") || {};\n            other[item.tag] = item.value;\n            global.set(\"other_tags\", other);\n            break;\n    }\n});\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1450,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a33ec18ff3be2983",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "LAST VALUE ",
+        "info": "",
+        "x": 850,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "8f96890135a5b3f4",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "monthly_values",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1260,
+        "y": 340,
+        "wires": [
+            [
+                "62c3d29e8868010a"
+            ]
+        ]
+    },
+    {
+        "id": "cba125386e28ffd2",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "TAG",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 850,
+        "y": 340,
+        "wires": [
+            [
+                "7742d68604ba1d65"
+            ]
+        ]
+    },
+    {
+        "id": "23e7f2037a78fe9a",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "SET GLOBAL",
+        "func": "const data = msg.payload;\n\nconst locationMap = {\n    \"บ่อสูบน้ำเสียอาคาร 2\": \"alarm_waste_pump_building_2\",\n    \"บ่อสูบน้ำเสียอาคาร 1\": \"alarm_waste_pump_building_1\",\n    \"บ่อบำบัด\": \"alarm_treatment_tank\",\n    \"น้ำเข้า\": \"alarm_water_in\",\n    \"น้ำออก\": \"alarm_water_out\",\n    \"น้ำแอร์รังผึ้งอาคาร 2\": \"alarm_cooling_water_building_2\",\n    \"น้ำใช้อาคาร 2\": \"alarm_water_usage_building_2\",\n    \"น้ำบำบัดกลับมาใช้ใหม่\": \"alarm_reused_treated_water\",\n    \"น้ำดื่ม\": \"alarm_drinking_water\",\n    \"น้ำแอร์รังผึ้งอาคาร 1\": \"alarm_cooling_water_building_1\",\n    \"น้ำใช้อาคาร 1\": \"alarm_water_usage_building_1\"\n};\n\nfor (const key in locationMap) {\n    global.set(locationMap[key], 0);\n}\n\nif (data && data.length > 0) {\n    data.forEach(item => {\n        const engKey = locationMap[item.location];\n        if (engKey) {\n            if (item.status === 'Stop alarm') {\n                global.set(engKey, 1);\n            } else {\n                global.set(engKey, 0);\n            }\n        }\n    });\n}\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1450,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "052416a916b66797",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "alarm_log",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1240,
+        "y": 520,
+        "wires": [
+            [
+                "23e7f2037a78fe9a"
+            ]
+        ]
+    },
+    {
+        "id": "132603a0fe7aa9b8",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "TAG",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 850,
+        "y": 520,
+        "wires": [
+            [
+                "85269a823fbf74eb"
+            ]
+        ]
+    },
+    {
+        "id": "ccc0c617284e4bf9",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "5bce3b87ac2499e3",
+        "client": "",
+        "x": 550,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "c1654f344bfca96a",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "bf2551346b5d5ca7",
+        "client": "",
+        "x": 550,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "5b84fc296ec1d470",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "16f0c80a8cca07fb",
+        "client": "",
+        "x": 590,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "377ccee012740e9b",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "757ea9eb2d3f60fe",
+        "client": "",
+        "x": 610,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "9f604a87e0bfa9e3",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "76d1d6b6bef6c227",
+        "client": "",
+        "x": 590,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "c1163a591adfcf85",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "41ae5b46de19e7f4",
+        "client": "",
+        "x": 570,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "4322b746df48b068",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "09b555b2b08b269f",
+        "client": "",
+        "x": 610,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "fed08c9092197d76",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "731b6984167a5676",
+        "client": "",
+        "x": 590,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "ee6d57d26d2ed770",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "dash board",
+        "func": "//ไฟฟ้า\nlet kwh_treatment_pond = global.get('kwh_treatment_pond')|| 0;\nlet kwh_wastewater_pump_building1 = global.get('kwh_wastewater_pump_building1')|| 0;\nlet kwh_wastewater_pump_building2 = global.get('kwh_wastewater_pump_building2')|| 0;\n\n//น้ำบำบัด\nlet water_in = global.get('water_in')|| 0;\nlet water_out = global.get('water_out')|| 0;\n\n//น้ำใช้\nlet water_usage_building2 = global.get('water_usage_building2')|| 0;\nlet reused_treated_water = global.get('reused_treated_water')|| 0;\nlet drinking_water = global.get('drinking_water')|| 0;\nlet air_cooling_water_building1 = global.get('air_cooling_water_building1')|| 0;\nlet air_cooling_water_building2 = global.get('air_cooling_water_building2')|| 0;\nlet water_usage_building1 = global.get('water_usage_building1')|| 0;\n\nlet total_sum_wateryear = global.get('total_sum_wateryear')|| 0;\nlet total_sum_watermonth = global.get('total_sum_watermonth')|| 0;\nlet total_sum_wateryesterday = global.get('total_sum_wateryesterday')|| 0;\nlet total_sum_poweryear = global.get('total_sum_poweryear')|| 0;\nlet total_sum_powermonth = global.get('total_sum_powermonth')|| 0;\nlet total_sum_poweryesterday = global.get('total_sum_poweryesterday')|| 0;\n\nlet status = global.get('status_check');\nmsg.payload = {\n    total_sum_wateryear: Number(total_sum_wateryear.toFixed(2)),\n    total_sum_watermonth: Number(total_sum_watermonth.toFixed(2)),\n    total_sum_wateryesterday: Number(total_sum_wateryesterday.toFixed(2)),\n    total_sum_poweryear: Number(total_sum_poweryear.toFixed(2)),\n    total_sum_powermonth: Number(total_sum_powermonth.toFixed(2)),\n    total_sum_poweryesterday: Number(total_sum_poweryesterday.toFixed(2)),\n    kwh_treatment_pond: Number(kwh_treatment_pond.toFixed(2)),\n    kwh_wastewater_pump_building1: Number(kwh_wastewater_pump_building1.toFixed(2)),\n    kwh_wastewater_pump_building2: Number(kwh_wastewater_pump_building2.toFixed(2)),\n    water_in: Number(water_in.toFixed(2)),\n    water_out: Number(water_out.toFixed(2)),\n    water_usage_building2: Number(water_usage_building2.toFixed(2)),\n    reused_treated_water: Number(reused_treated_water.toFixed(2)),\n    drinking_water: Number(drinking_water.toFixed(2)),\n    air_cooling_water_building1: Number(air_cooling_water_building1.toFixed(2)),\n    air_cooling_water_building2: Number(air_cooling_water_building2.toFixed(2)),\n    water_usage_building1: Number(water_usage_building1.toFixed(2)),\n    status: status\n};\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 700,
+        "wires": [
+            [
+                "bf6fe64d0bd10423"
+            ]
+        ]
+    },
+    {
+        "id": "4ef1e8deca4e50c7",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "DASHBOARD",
+        "info": "",
+        "x": 850,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "9822b949bd0cf256",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 700,
+        "wires": [
+            [
+                "ee6d57d26d2ed770"
+            ]
+        ]
+    },
+    {
+        "id": "4bb4156242071871",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "d51475ba362dba17",
+        "client": "",
+        "x": 1410,
+        "y": 1420,
+        "wires": []
+    },
+    {
+        "id": "0391450564801842",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "872a2fac46a293b2",
+        "client": "",
+        "x": 1370,
+        "y": 1360,
+        "wires": []
+    },
+    {
+        "id": "a90ee6961e2c991e",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "f171e2541e24e08c",
+        "client": "",
+        "x": 1410,
+        "y": 1480,
+        "wires": []
+    },
+    {
+        "id": "d3056591c51c551f",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "1",
+        "dataType": "HoldingRegister",
+        "adr": "3027",
+        "quantity": "6",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "d7bbf80511aed649",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 1020,
+        "wires": [
+            [
+                "93b14020a03b7c97"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c6b67c76dcf8165c",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "",
+        "dataType": "HoldingRegister",
+        "adr": "3027",
+        "quantity": "6",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "e4b839701666c22b",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 1080,
+        "wires": [
+            [
+                "f305832bfc6d03e3"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "ab3c54aec75bc4d4",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "",
+        "dataType": "HoldingRegister",
+        "adr": "3027",
+        "quantity": "6",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "ff55a5ed698b5215",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 1140,
+        "wires": [
+            [
+                "aa4a45f3c9a1846e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "78358df56cc1c319",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "1",
+        "dataType": "HoldingRegister",
+        "adr": "2699",
+        "quantity": "2",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "d7bbf80511aed649",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 1200,
+        "wires": [
+            [
+                "5d385b5588f9481d"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "1257f22a81f4f4b1",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "2",
+        "dataType": "HoldingRegister",
+        "adr": "2699",
+        "quantity": "2",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "e4b839701666c22b",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 1260,
+        "wires": [
+            [
+                "25d478e05b161866"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "666eb6c9fa8a9f5c",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "3",
+        "dataType": "HoldingRegister",
+        "adr": "2699",
+        "quantity": "2",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "ff55a5ed698b5215",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 1320,
+        "wires": [
+            [
+                "6bd7605d6ab2fd5e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "40202a468315d120",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "1",
+        "dataType": "HoldingRegister",
+        "adr": "2999",
+        "quantity": "6",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "d7bbf80511aed649",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 1380,
+        "wires": [
+            [
+                "9c65a77b73efd3fa"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "d7c85468739e55a5",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "2",
+        "dataType": "HoldingRegister",
+        "adr": "2999",
+        "quantity": "6",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "e4b839701666c22b",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 1440,
+        "wires": [
+            [
+                "2b1c4a95493bd31c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "8d6a3d81a298072d",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "3",
+        "dataType": "HoldingRegister",
+        "adr": "2999",
+        "quantity": "6",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "ff55a5ed698b5215",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 1500,
+        "wires": [
+            [
+                "06df1d34d3cb80b4"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "1f50b6c2ddc90db3",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "",
+        "dataType": "HoldingRegister",
+        "adr": "4112",
+        "quantity": "20",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "85a84d3fd048de03",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 220,
+        "wires": [
+            [
+                "f32280786bcb8d9d",
+                "68f10755df96bdf9"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "fc526402f50f27ce",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "",
+        "dataType": "HoldingRegister",
+        "adr": "4113",
+        "quantity": "20",
+        "rate": "2",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "ec708b990f287786",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 100,
+        "wires": [
+            [
+                "8321d53a0272876d",
+                "50dbe7d16ffd13d1"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "6a15e6def805e6de",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "Modbus Read",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "",
+        "dataType": "HoldingRegister",
+        "adr": "0",
+        "quantity": "2",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "db400483bda135fa",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 580,
+        "wires": [
+            [
+                "fada65e01a5f3f8a",
+                "af7d132b7faa60f3"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "7d95b0f8080c5029",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "Modbus Read",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "2",
+        "dataType": "HoldingRegister",
+        "adr": "0",
+        "quantity": "2",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "df75c817f8c01570",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 460,
+        "wires": [
+            [
+                "2a97f86f740a3154",
+                "bf8da9fd2da15e5c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "6d5fc78dbf6a8f90",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "Modbus Read",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "4",
+        "dataType": "HoldingRegister",
+        "adr": "0",
+        "quantity": "2",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "ce6c962faba28be2",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "fe9dc8687140773f",
+                "8fe3f5493d46297c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "bac410fa6bdab147",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "Modbus Read",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "",
+        "dataType": "HoldingRegister",
+        "adr": "0",
+        "quantity": "2",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "8339aaeefc9451f2",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 700,
+        "wires": [
+            [
+                "f9e4e3c7b15ddd01",
+                "b0cc3ec52564d1c0"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "947b7bca1fda3388",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "Modbus Read",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "",
+        "dataType": "HoldingRegister",
+        "adr": "0",
+        "quantity": "2",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "8aca6cb46b0e42b1",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 820,
+        "wires": [
+            [
+                "6e60aae6dbd5d597",
+                "a9c2c77fa2e33c85"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "ad3a9b6cede93337",
+        "type": "modbus-read",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "3",
+        "dataType": "HoldingRegister",
+        "adr": "0",
+        "quantity": "2",
+        "rate": "1",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "c6802708320b7c88",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 110,
+        "y": 940,
+        "wires": [
+            [
+                "915b7af78dc5bd26",
+                "98c4ec082d9eb68e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "6e8cda1c12f7786b",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "V 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "d1c2184d891b0330",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "V 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "244b4f879b0ac94d",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "V 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "93b6ac7ffbd042ca",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "kWh 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "f26d428f5fa379e9",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "kWh 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "5f54175c16af537a",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "kWh 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 1320,
+        "wires": []
+    },
+    {
+        "id": "b637d0f7bea42c91",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "C 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 1380,
+        "wires": []
+    },
+    {
+        "id": "ec979716c296d983",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "C 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "1bbeea546ee069fa",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "C 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 1500,
+        "wires": []
+    },
+    {
+        "id": "f4a02f418f129283",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "treatment_pond",
+        "func": "let VR1 = global.get(\"voltage_R_treatment_pond\");\nlet VS1 = global.get(\"voltage_S_treatment_pond\");\nlet VT1 = global.get(\"voltage_T_treatment_pond\");\nlet kWh1 = global.get(\"kwh_treatment_pond\");\nlet CR1 = global.get(\"Current_R_treatment_pond\");\nlet CS1 = global.get(\"Current_S_treatment_pond\");\nlet CT1 = global.get(\"Current_T_treatment_pond\");\nlet ytd = global.get(\"yesterday_treatment_tank\")\n\nmsg.payload = {\n    kwh: kWh1,\n    voltage_R: VR1,\n    voltage_S: VS1,\n    voltage_T: VT1,\n    current_R: CR1,\n    current_S: CS1,\n    current_T: CT1,\n    yesterday: ytd\n};\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 1360,
+        "wires": [
+            [
+                "0391450564801842",
+                "9f132cd642c7cb66"
+            ]
+        ]
+    },
+    {
+        "id": "19b0d81e225038c6",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "wastewater_pump_building1",
+        "func": "let VR2 = global.get(\"voltage_R_wastewater_pump_building1\");\nlet VS2 = global.get(\"voltage_S_wastewater_pump_building1\");\nlet VT2 = global.get(\"voltage_T_wastewater_pump_building1\");\nlet kWh2 = global.get(\"kwh_wastewater_pump_building1\");\nlet CR2 = global.get(\"Current_R_wastewater_pump_building1\");\nlet CS2 = global.get(\"Current_S_wastewater_pump_building1\");\nlet CT2 = global.get(\"Current_T_wastewater_pump_building1\");\nlet ytd = global.get(\"yesterday_waste_pump_b1\")\n\nmsg.payload = {\n    kwh: kWh2,\n    voltage_R: VR2,\n    voltage_S: VS2,\n    voltage_T: VT2,\n    current_R: CR2,\n    current_S: CS2,\n    current_T: CT2,\n    yesterday: ytd\n};\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1100,
+        "y": 1420,
+        "wires": [
+            [
+                "4bb4156242071871"
+            ]
+        ]
+    },
+    {
+        "id": "184e3631eb0b962f",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "wastewater_pump_building2",
+        "func": "let VR3 = global.get(\"voltage_R_wastewater_pump_building2\");\nlet VS3 = global.get(\"voltage_S_wastewater_pump_building2\");\nlet VT3 = global.get(\"voltage_T_wastewater_pump_building2\");\nlet kWh3 = global.get(\"kwh_wastewater_pump_building2\");\nlet CR3 = global.get(\"Current_R_wastewater_pump_building2\");\nlet CS3 = global.get(\"Current_S_wastewater_pump_building2\");\nlet CT3 = global.get(\"Current_T_wastewater_pump_building2\");\nlet ytd = global.get(\"yesterday_waste_pump_b2\")\n\nmsg.payload = {\n    kwh: kWh3,\n    voltage_R: VR3,\n    voltage_S: VS3,\n    voltage_T: VT3,\n    current_R: CR3,\n    current_S: CS3,\n    current_T: CT3,\n    yesterday: ytd\n};\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1100,
+        "y": 1480,
+        "wires": [
+            [
+                "a90ee6961e2c991e"
+            ]
+        ]
+    },
+    {
+        "id": "7f80f38235a9894f",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 1360,
+        "wires": [
+            [
+                "f4a02f418f129283"
+            ]
+        ]
+    },
+    {
+        "id": "80cf24d2720f0e04",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 1690,
+        "y": 400,
+        "wires": [
+            [
+                "fd8064cbb2ae45fc",
+                "302ad4c12b4798f2",
+                "c42c26a92796cf3d",
+                "8f1c70dc82798cef",
+                "04e3fae13b601dfe",
+                "347306bae70c6b98",
+                "ac771b8932f53957",
+                "6ef0b40fa2722911",
+                "af9f8b442b2d3f75",
+                "61267c48cdcd95e8",
+                "68c7f9ae6332bd1d"
+            ]
+        ]
+    },
+    {
+        "id": "a72378b2fc06ec26",
+        "type": "http request",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2270,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fd8064cbb2ae45fc",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "แจ้งเตือน : บ่อบำบัด",
+        "func": "var sendStatus = global.get(\"sendStatus\");\nvar now = new Date();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar hours = now.getHours();\nvar minutes = now.getMinutes().toString().padStart(2, '0');\nvar seconds = now.getSeconds().toString().padStart(2, '0');\nvar currentDateAndTime = \"วันที่ \" + day + \"/\" + month + \"/\" + year + \" เวลา \" + hours + \":\" + minutes + \":\" + seconds;\n\nvar voltage_R_treatment_pond = global.get(\"voltage_R_treatment_pond\") || 0;\nvar voltage_S_treatment_pond = global.get(\"voltage_S_treatment_pond\") || 0;\nvar voltage_T_treatment_pond = global.get(\"voltage_T_treatment_pond\") || 0;\nvar max_treatment_tank = global.get(\"max_treatment_tank\") || 0;\nvar min_treatment_tank = global.get(\"min_treatment_tank\") || 0;\n\n\nvar max = max_treatment_tank;\nvar min = min_treatment_tank;\n\n\nvar state = context.get(\"state\") || 0;\n\nif ((voltage_R_treatment_pond < min || voltage_R_treatment_pond > max) &&\n    (voltage_S_treatment_pond < min || voltage_S_treatment_pond > max) &&\n    (voltage_T_treatment_pond < min || voltage_T_treatment_pond > max)) {\n\n    var lineMessage = \"🚨แจ้งเตือน บ่อบำบัด และ บ่อสูบน้ำเสีย อาคาร 1\" + currentDateAndTime +\n        \"\\nVoltage R: \" + voltage_R_treatment_pond +\n        \"\\nVoltage S: \" + voltage_S_treatment_pond +\n        \"\\nVoltage T: \" + voltage_T_treatment_pond;\n\n    // ตั้งค่า Token และ Headers\n    var token = 'jKkmtfGaSxAFdQB9LreuYoewgtrkugTlAAG78pW1aG7yQ45dd1+IqNfTh8H0gItKEzw0K/nFQ5CPNIFoUQ5cvuIKgXYz+jj+yn8qtxfWsL2F/1Z4iWyatOS9HcblH81q5FyTueICaj9GM+Ijy2F/hwdB04t89/1O/w1cDnyilFU=';\n    msg.headers = {\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer ' + token\n    };\n\n    var groupId = \"C73c4c23f6a46099ef66118de65aa2513\";\n\n    // เช็คสถานะ state\n    if (state === 0) {\n        context.set(\"state\", 1);\n        msg.payload = {\n            to: groupId,\n            messages: [\n                {\n                    type: \"text\",\n                    text: lineMessage\n                }\n            ]\n        };\n        node.send(msg);\n\n        // ตั้ง Timer เพื่อส่งข้อความซ้ำทุก 2 นาที\n        if (!context.get(\"timer\")) {\n            var timer = setInterval(() => {\n                msg.payload = {\n                    to: groupId,\n                    messages: [\n                        {\n                            type: \"text\",\n                            text: lineMessage\n                        }\n                    ]\n                };\n                node.send(msg);\n            }, 120000); // 120,000 ms = 2 นาที\n            context.set(\"timer\", timer);\n        }\n    }\n} else {\n    // หากไม่มีการแจ้งเตือนให้รีเซ็ต state และหยุด Timer\n    context.set(\"state\", 0);\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}\n\n// รีเซ็ตด้วย msg.reset\nif (msg.reset) {\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1870,
+        "y": 100,
+        "wires": [
+            [
+                "a72378b2fc06ec26"
+            ]
+        ]
+    },
+    {
+        "id": "db75b7d36302654c",
+        "type": "http request",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2270,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "302ad4c12b4798f2",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "แจ้งเตือน : บ่อสูบน้ำเสียอาคาร 1",
+        "func": "var sendStatus = global.get(\"sendStatus\");\nvar now = new Date();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar hours = now.getHours();\nvar minutes = now.getMinutes().toString().padStart(2, '0');\nvar seconds = now.getSeconds().toString().padStart(2, '0');\nvar currentDateAndTime = \"วันที่ \" + day + \"/\" + month + \"/\" + year + \" เวลา \" + hours + \":\" + minutes + \":\" + seconds;\n\nvar voltage_R_wastewater_pump_building1 = global.get(\"voltage_R_wastewater_pump_building1\") || 0;\nvar voltage_S_wastewater_pump_building1 = global.get(\"voltage_S_wastewater_pump_building1\") || 0;\nvar voltage_T_wastewater_pump_building1 = global.get(\"voltage_T_wastewater_pump_building1\") || 0;\nvar max_waste_pump_b1 = global.get(\"max_waste_pump_b1\") || 0;\nvar min_waste_pump_b1 = global.get(\"min_waste_pump_b1\") || 0;\n\nvar max = max_waste_pump_b1;\nvar min = min_waste_pump_b1;\n\nvar state = context.get(\"state\") || 0;\n\nif ((voltage_R_wastewater_pump_building1 < min || voltage_R_wastewater_pump_building1 > max) &&\n    (voltage_S_wastewater_pump_building1 < min || voltage_S_wastewater_pump_building1 > max) &&\n    (voltage_T_wastewater_pump_building1 < min || voltage_T_wastewater_pump_building1 > max)) {\n\n    var lineMessage = \"🚨 แจ้งเตือน บ่อบำบัด และ บ่อสูบน้ำเสีย อาคาร 1\" + currentDateAndTime +\n        \"\\nVoltage R: \" + voltage_R_wastewater_pump_building1 +\n        \"\\nVoltage S: \" + voltage_S_wastewater_pump_building1 +\n        \"\\nVoltage T: \" + voltage_T_wastewater_pump_building1;\n\n    // ตั้งค่า Token และ Headers\n    var token = 'jKkmtfGaSxAFdQB9LreuYoewgtrkugTlAAG78pW1aG7yQ45dd1+IqNfTh8H0gItKEzw0K/nFQ5CPNIFoUQ5cvuIKgXYz+jj+yn8qtxfWsL2F/1Z4iWyatOS9HcblH81q5FyTueICaj9GM+Ijy2F/hwdB04t89/1O/w1cDnyilFU=';\n    msg.headers = {\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer ' + token\n    };\n\n    var groupId = \"C73c4c23f6a46099ef66118de65aa2513\";\n\n    // เช็คสถานะ state\n    if (state === 0) {\n        context.set(\"state\", 1);\n        msg.payload = {\n            to: groupId,\n            messages: [\n                {\n                    type: \"text\",\n                    text: lineMessage\n                }\n            ]\n        };\n        node.send(msg);\n\n        // ตั้ง Timer เพื่อส่งข้อความซ้ำทุก 2 นาที\n        if (!context.get(\"timer\")) {\n            var timer = setInterval(() => {\n                msg.payload = {\n                    to: groupId,\n                    messages: [\n                        {\n                            type: \"text\",\n                            text: lineMessage\n                        }\n                    ]\n                };\n                node.send(msg);\n            }, 120000); // 120,000 ms = 2 นาที\n            context.set(\"timer\", timer);\n        }\n    }\n} else {\n    // หากไม่มีการแจ้งเตือนให้รีเซ็ต state และหยุด Timer\n    context.set(\"state\", 0);\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}\n\n// รีเซ็ตด้วย msg.reset\nif (msg.reset) {\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1910,
+        "y": 160,
+        "wires": [
+            [
+                "db75b7d36302654c"
+            ]
+        ]
+    },
+    {
+        "id": "9d0cb01e1b1160a5",
+        "type": "http request",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2270,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c42c26a92796cf3d",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "แจ้งเตือน : บ่อสูบน้ำเสียอาคาร 2",
+        "func": "var sendStatus = global.get(\"sendStatus\");\nvar now = new Date();\nvar day = now.getDate();\nvar month = now.getMonth() + 1;\nvar year = now.getFullYear();\nvar hours = now.getHours();\nvar minutes = now.getMinutes().toString().padStart(2, '0');\nvar seconds = now.getSeconds().toString().padStart(2, '0');\nvar currentDateAndTime = \"วันที่ \" + day + \"/\" + month + \"/\" + year + \" เวลา \" + hours + \":\" + minutes + \":\" + seconds;\n\nvar voltage_R_wastewater_pump_building2 = global.get(\"voltage_R_wastewater_pump_building2\") || 0;\nvar voltage_S_wastewater_pump_building2 = global.get(\"voltage_S_wastewater_pump_building2\") || 0;\nvar voltage_T_wastewater_pump_building2 = global.get(\"voltage_T_wastewater_pump_building2\") || 0;\nvar max_waste_pump_b2 = global.get(\"max_waste_pump_b2\") || 0;\nvar min_waste_pump_b2 = global.get(\"min_waste_pump_b2\") || 0;\n\nvar max = max_waste_pump_b2;\nvar min = min_waste_pump_b2;\n\nvar state = context.get(\"state\") || 0;\n\nif ((voltage_R_wastewater_pump_building2 < min || voltage_R_wastewater_pump_building2 > max) &&\n    (voltage_S_wastewater_pump_building2 < min || voltage_S_wastewater_pump_building2 > max) &&\n    (voltage_T_wastewater_pump_building2 < min || voltage_T_wastewater_pump_building2 > max)) {\n\n    var lineMessage = \"🚨 แจ้งเตือน บ่อสูบน้ำเสีย อาคาร 2\" + currentDateAndTime +\n        \"\\nVoltage R: \" + voltage_R_wastewater_pump_building2 +\n        \"\\nVoltage S: \" + voltage_S_wastewater_pump_building2 +\n        \"\\nVoltage T: \" + voltage_T_wastewater_pump_building2;\n\n    // ตั้งค่า Token และ Headers\n    var token = 'jKkmtfGaSxAFdQB9LreuYoewgtrkugTlAAG78pW1aG7yQ45dd1+IqNfTh8H0gItKEzw0K/nFQ5CPNIFoUQ5cvuIKgXYz+jj+yn8qtxfWsL2F/1Z4iWyatOS9HcblH81q5FyTueICaj9GM+Ijy2F/hwdB04t89/1O/w1cDnyilFU=';\n    msg.headers = {\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer ' + token\n    };\n\n    var groupId = \"C73c4c23f6a46099ef66118de65aa2513\";\n\n    // เช็คสถานะ state\n    if (state === 0) {\n        context.set(\"state\", 1);\n        msg.payload = {\n            to: groupId,\n            messages: [\n                {\n                    type: \"text\",\n                    text: lineMessage\n                }\n            ]\n        };\n        node.send(msg);\n\n        // ตั้ง Timer เพื่อส่งข้อความซ้ำทุก 2 นาที\n        if (!context.get(\"timer\")) {\n            var timer = setInterval(() => {\n                msg.payload = {\n                    to: groupId,\n                    messages: [\n                        {\n                            type: \"text\",\n                            text: lineMessage\n                        }\n                    ]\n                };\n                node.send(msg);\n            }, 120000); // 120,000 ms = 2 นาที\n            context.set(\"timer\", timer);\n        }\n    }\n} else {\n    // หากไม่มีการแจ้งเตือนให้รีเซ็ต state และหยุด Timer\n    context.set(\"state\", 0);\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}\n\n// รีเซ็ตด้วย msg.reset\nif (msg.reset) {\n    timer = context.get(\"timer\");\n    if (timer) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1910,
+        "y": 220,
+        "wires": [
+            [
+                "9d0cb01e1b1160a5"
+            ]
+        ]
+    },
+    {
+        "id": "8e2f32157d235e47",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "INSERT MONTHLY",
+        "func": "var timestamp = msg.payload;\nvar currentDate = new Date(timestamp);\n\nlet kwh_treatment_pond = global.get('kwh_treatment_pond');\nlet kwh_wastewater_pump_building1 = global.get('kwh_wastewater_pump_building1');\nlet kwh_wastewater_pump_building2 = global.get('kwh_wastewater_pump_building2');\nlet water_in = global.get('water_in');\nlet water_out = global.get('water_out');\nlet water_usage_building2 = global.get('water_usage_building2');\nlet reused_treated_water = global.get('reused_treated_water');\nlet drinking_water = global.get('drinking_water');\nlet air_cooling_water_building1 = global.get('air_cooling_water_building1');\nlet air_cooling_water_building2 = global.get('air_cooling_water_building2');\nlet water_usage_building1 = global.get('water_usage_building1');\n\nvar day = currentDate.getDate();\nvar lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();\nvar year = currentDate.getFullYear();\n\nvar state = context.get(\"state\") || 0;\n\nif (day === lastDayOfMonth) {\n    if (state === 0) {\n        context.set(\"state\", 1);\n\n        msg.query = `\n        INSERT INTO monthly_values (value, tag) VALUES \n        (${kwh_treatment_pond}, 'บ่อบำบัด'),\n        (${kwh_wastewater_pump_building1}, 'บ่อสูบน้ำเสียอาคาร 1'),\n        (${kwh_wastewater_pump_building2}, 'บ่อสูบน้ำเสียอาคาร 2'),\n        (${water_in}, 'น้ำเข้า'),\n        (${water_out}, 'น้ำออก'),\n        (${water_usage_building2}, 'น้ำใช้อาคาร 2'),\n        (${reused_treated_water}, 'น้ำบำบัดกลับมาใช้ใหม่'),\n        (${drinking_water}, 'น้ำดื่ม'),\n        (${air_cooling_water_building1}, 'น้ำแอร์รังผึ้งอาคาร 1'),\n        (${air_cooling_water_building2}, 'น้ำแอร์รังผึ้งอาคาร 2'),\n        (${water_usage_building1}, 'น้ำใช้อาคาร 1')\n        `;\n        return msg;\n    }\n} else {\n    context.set(\"state\", 0);\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1070,
+        "y": 580,
+        "wires": [
+            [
+                "f9912e943887c9d6"
+            ]
+        ]
+    },
+    {
+        "id": "fcfed9ca3ad2e574",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 580,
+        "wires": [
+            [
+                "8e2f32157d235e47"
+            ]
+        ]
+    },
+    {
+        "id": "7742d68604ba1d65",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Select Tag",
+        "func": "msg.query = `\nSELECT DISTINCT ON (\"tag\") * \nFROM \"monthly_values\"\nWHERE \"tag\" IN (\n    'น้ำใช้อาคาร 1',\n    'น้ำดื่ม',\n    'น้ำบำบัดกลับมาใช้ใหม่',\n    'น้ำใช้อาคาร 2',\n    'น้ำแอร์รังผึ้งอาคาร 1',\n    'น้ำแอร์รังผึ้งอาคาร 2',\n    'บ่อบำบัด',\n    'บ่อสูบน้ำเสียอาคาร 1',\n    'บ่อสูบน้ำเสียอาคาร 2',\n    'น้ำเข้า',\n    'น้ำออก'\n)\nORDER BY \"tag\", \"created_at\" DESC;\n`;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 340,
+        "wires": [
+            [
+                "8f96890135a5b3f4"
+            ]
+        ]
+    },
+    {
+        "id": "85269a823fbf74eb",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Select Tag",
+        "func": "msg.query = `\nSELECT DISTINCT ON (\"location\") *\nFROM alarm_log\nWHERE DATE(\"created_at\") = CURRENT_DATE\nORDER BY \"location\", \"created_at\" DESC;\n`;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 520,
+        "wires": [
+            [
+                "052416a916b66797"
+            ]
+        ]
+    },
+    {
+        "id": "f9912e943887c9d6",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "last_monthly",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1250,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e77e394891489fe3",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "SET GLOBAL",
+        "func": "const data = msg.payload;\n\ndata.forEach(item => {\n    switch (item.tag) {\n        case 'น้ำใช้อาคาร 1':\n            global.set(\"max_water_usage_b1\", item.max);\n            break;\n        case 'น้ำดื่ม':\n            global.set(\"max_drinking_water\", item.max);\n            break;\n        case 'น้ำบำบัดกลับมาใช้ใหม่':\n            global.set(\"max_reused_water\", item.max);\n            break;\n        case 'น้ำใช้อาคาร 2':\n            global.set(\"max_water_usage_b2\", item.max);\n            break;\n        case 'น้ำแอร์รังผึ้งอาคาร 1':\n            global.set(\"max_cooling_water_b1\", item.max);\n            break;\n        case 'น้ำแอร์รังผึ้งอาคาร 2':\n            global.set(\"max_cooling_water_b2\", item.max);\n            break;\n        case 'บ่อบำบัด':\n            global.set(\"min_treatment_tank\", item.min);\n            global.set(\"max_treatment_tank\", item.max);\n            break;\n        case 'บ่อสูบน้ำเสียอาคาร 1':\n            global.set(\"min_waste_pump_b1\", item.min);\n            global.set(\"max_waste_pump_b1\", item.max);\n            break;\n        case 'บ่อสูบน้ำเสียอาคาร 2':\n            global.set(\"min_waste_pump_b2\", item.min);\n            global.set(\"max_waste_pump_b2\", item.max);\n            break;\n        case 'น้ำเข้า':\n            global.set(\"max_water_in\", item.max);\n            break;\n        case 'น้ำออก':\n            global.set(\"max_water_out\", item.max);\n            break;\n        default:\n            let other = global.get(\"other_tags\") || {};\n            other[item.tag] = item.value;\n            global.set(\"other_tags\", other);\n            break;\n    }\n});\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1450,
+        "y": 460,
+        "wires": [
+            [
+                "d3dade57083b8a52"
+            ]
+        ]
+    },
+    {
+        "id": "934653ca3c485d76",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "monthly_threshold",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1270,
+        "y": 460,
+        "wires": [
+            [
+                "e77e394891489fe3"
+            ]
+        ]
+    },
+    {
+        "id": "69032641a91e2f59",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "TAG",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 850,
+        "y": 460,
+        "wires": [
+            [
+                "a7e16cd91bc2941d"
+            ]
+        ]
+    },
+    {
+        "id": "a7e16cd91bc2941d",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Select Tag",
+        "func": "msg.query = `\nSELECT \"tag\", \"max\", \"min\", \"colorMax\", \"colorMin\"\nFROM \"value_thresholds\"\nORDER BY id;\n`;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 460,
+        "wires": [
+            [
+                "934653ca3c485d76"
+            ]
+        ]
+    },
+    {
+        "id": "f2a698fb3ad4d785",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "debug 12",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "d713de6da25b18c1",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "W",
+        "func": "const g = (key) => global.get(key) ?? 0;\n\nmsg.payload = {\n    water_in: g('water_in') - g(\"yesterday_water_in\"),\n    water_out: g('water_out') - g(\"yesterday_water_out\"),\n    water_usage_building2: g('water_usage_building2') - g(\"yesterday_water_usage_b2\"),\n    water_usage_building1: g('water_usage_building1') - g(\"yesterday_water_usage_b1\"),\n    reused_treated_water: g('reused_treated_water') - g(\"yesterday_reused_water\"),\n    drinking_water: g('drinking_water') - g(\"yesterday_drinking_water\"),\n    air_cooling_water_building1: g('air_cooling_water_building1') - g(\"yesterday_cooling_water_b1\"),\n    air_cooling_water_building2: g('air_cooling_water_building2') - g(\"yesterday_cooling_water_b2\"),\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 1240,
+        "wires": [
+            [
+                "c58fad7738a3219d"
+            ]
+        ]
+    },
+    {
+        "id": "c58fad7738a3219d",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "888be62b0d45bdd0",
+        "client": "",
+        "x": 1330,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "90f13f1d2194da4c",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 1240,
+        "wires": [
+            [
+                "d713de6da25b18c1"
+            ]
+        ]
+    },
+    {
+        "id": "c31ddc32e4d485b2",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "SET GLOBAL",
+        "func": "const mapping = {\n    water_usage_building1: \"yesterday_water_usage_b1\",\n    drinking_water: \"yesterday_drinking_water\",\n    reused_treated_water: \"yesterday_reused_water\",\n    water_usage_building2: \"yesterday_water_usage_b2\",\n    air_cooling_water_building1: \"yesterday_cooling_water_b1\",\n    air_cooling_water_building2: \"yesterday_cooling_water_b2\",\n    treatment_pond: \"yesterday_treatment_tank\",\n    wastewater_pump_building1: \"yesterday_waste_pump_b1\",\n    wastewater_pump_building2: \"yesterday_waste_pump_b2\",\n    water_in: \"yesterday_water_in\",\n    water_out: \"yesterday_water_out\"\n};\n\nconst dataArray = msg.payload;\nconst row = dataArray.length > 0 ? dataArray[0] : {};\n\nfor (const [key, value] of Object.entries(row)) {\n    if (mapping[key]) {\n        global.set(mapping[key], value);\n    } else {\n        if (key !== 'recorded_date') {\n            let other = global.get(\"other_tags\") || {};\n            other[key] = value;\n            global.set(\"other_tags\", other);\n        }\n    }\n}\n\n// สร้าง payload เพื่อแสดงค่า global ที่เซ็ตไว้\nconst output = {};\nfor (const key of Object.values(mapping)) {\n    output[key] = global.get(key);\n}\noutput.other_tags = global.get(\"other_tags\") || {};\n\nmsg.payload = output;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1470,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "52aae8335715ee62",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "yesterday_values",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1270,
+        "y": 400,
+        "wires": [
+            [
+                "c31ddc32e4d485b2"
+            ]
+        ]
+    },
+    {
+        "id": "6aacddfe2a80a7df",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "TAG",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 850,
+        "y": 400,
+        "wires": [
+            [
+                "84f8507e327b152b"
+            ]
+        ]
+    },
+    {
+        "id": "84f8507e327b152b",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "Select Tag",
+        "func": "msg.query = `\nSELECT \n  bwm.air_cooling_water_building2,\n  bwm.water_usage_building2,\n  bwm.reused_treated_water,\n  bwm.drinking_water,\n  bwm.air_cooling_water_building1,\n  bwm.water_usage_building1,\n\n  wm.water_in,\n  wm.water_out,\n\n  pm.treatment_pond,\n  pm.wastewater_pump_building1,\n  pm.wastewater_pump_building2,\n\n  bwm.recorded_at::date AS recorded_date\n\nFROM public.building_water_meters bwm\nLEFT JOIN public.water_meters wm\n  ON wm.recorded_at::date = bwm.recorded_at::date\nLEFT JOIN public.power_meters pm\n  ON pm.recorded_at::date = bwm.recorded_at::date\n\nWHERE bwm.recorded_at::date = CURRENT_DATE - INTERVAL '1 day';\n\n\n`;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 400,
+        "wires": [
+            [
+                "52aae8335715ee62"
+            ]
+        ]
+    },
+    {
+        "id": "bf6fe64d0bd10423",
+        "type": "websocket out",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "server": "d503565c9fb993b4",
+        "client": "",
+        "x": 1240,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "47cc02d9d077688c",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "PY",
+        "func": "msg.query = ` WITH calc AS (\n  SELECT\n    CASE\n      WHEN LAG(treatment_pond) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN treatment_pond >= LAG(treatment_pond) OVER (ORDER BY recorded_at)\n        THEN treatment_pond - LAG(treatment_pond) OVER (ORDER BY recorded_at)\n      ELSE treatment_pond + LAG(treatment_pond) OVER (ORDER BY recorded_at)\n    END AS treatment_pond_calc,\n\n    CASE\n      WHEN LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN wastewater_pump_building1 >= LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at)\n        THEN wastewater_pump_building1 - LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at)\n      ELSE wastewater_pump_building1 + LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at)\n    END AS wastewater_pump_building1_calc,\n\n    CASE\n      WHEN LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN wastewater_pump_building2 >= LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at)\n        THEN wastewater_pump_building2 - LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at)\n      ELSE wastewater_pump_building2 + LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at)\n    END AS wastewater_pump_building2_calc\n\n  FROM power_meters\n  WHERE recorded_at >= date_trunc('year', CURRENT_DATE)\n    AND recorded_at < (date_trunc('year', CURRENT_DATE) + INTERVAL '1 year')\n)\n\nSELECT\n  SUM(treatment_pond_calc + wastewater_pump_building1_calc + wastewater_pump_building2_calc) AS total_sum_poweryear\nFROM calc;\n`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 1000,
+        "wires": [
+            [
+                "71ee5d0dc51ef9d2"
+            ]
+        ]
+    },
+    {
+        "id": "63b30976ee558e75",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "PD",
+        "func": "msg.query = `\nWITH calc AS ( \n  SELECT\n    CASE\n      WHEN LAG(treatment_pond) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN treatment_pond >= LAG(treatment_pond) OVER (ORDER BY recorded_at)\n        THEN treatment_pond - LAG(treatment_pond) OVER (ORDER BY recorded_at)\n      ELSE treatment_pond + LAG(treatment_pond) OVER (ORDER BY recorded_at)\n    END AS treatment_pond_calc,\n    \n    CASE\n      WHEN LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN wastewater_pump_building1 >= LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at)\n        THEN wastewater_pump_building1 - LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at)\n      ELSE wastewater_pump_building1 + LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at)\n    END AS wastewater_pump_building1_calc,\n    \n    CASE\n      WHEN LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN wastewater_pump_building2 >= LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at)\n        THEN wastewater_pump_building2 - LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at)\n      ELSE wastewater_pump_building2 + LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at)\n    END AS wastewater_pump_building2_calc\n\n  FROM power_meters\n  WHERE recorded_at >= date_trunc('month', CURRENT_DATE)\n    AND recorded_at < (date_trunc('month', CURRENT_DATE) + INTERVAL '1 month')\n)\n\nSELECT\n  SUM(treatment_pond_calc + wastewater_pump_building1_calc + wastewater_pump_building2_calc) AS total_sum_powermonth\nFROM calc;\n`;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 1060,
+        "wires": [
+            [
+                "0607d21513f08dea"
+            ]
+        ]
+    },
+    {
+        "id": "44a1c833db6bc58b",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "PD",
+        "func": "msg.query = ` WITH calc AS (\n        SELECT\n          recorded_at::date AS day,\n          \n          CASE\n            WHEN LAG(treatment_pond) OVER (ORDER BY recorded_at) IS NULL THEN 0\n            WHEN treatment_pond >= LAG(treatment_pond) OVER (ORDER BY recorded_at)\n              THEN treatment_pond - LAG(treatment_pond) OVER (ORDER BY recorded_at)\n            ELSE treatment_pond + LAG(treatment_pond) OVER (ORDER BY recorded_at)\n          END AS treatment_pond_calc,\n          \n          CASE\n            WHEN LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at) IS NULL THEN 0\n            WHEN wastewater_pump_building1 >= LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at)\n              THEN wastewater_pump_building1 - LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at)\n            ELSE wastewater_pump_building1 + LAG(wastewater_pump_building1) OVER (ORDER BY recorded_at)\n          END AS wastewater_pump_building1_calc,\n          \n          CASE\n            WHEN LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at) IS NULL THEN 0\n            WHEN wastewater_pump_building2 >= LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at)\n              THEN wastewater_pump_building2 - LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at)\n            ELSE wastewater_pump_building2 + LAG(wastewater_pump_building2) OVER (ORDER BY recorded_at)\n          END AS wastewater_pump_building2_calc\n        FROM power_meters\n        WHERE recorded_at::date BETWEEN CURRENT_DATE - INTERVAL '2 day' AND CURRENT_DATE - INTERVAL '1 day'\n      )\n      \n      SELECT\n        SUM(treatment_pond_calc + wastewater_pump_building1_calc + wastewater_pump_building2_calc) AS total_sum_poweryesterday\n      FROM calc\n      WHERE day = CURRENT_DATE - INTERVAL '1 day';`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 1120,
+        "wires": [
+            [
+                "c73df2be70e03847"
+            ]
+        ]
+    },
+    {
+        "id": "2202504b745398c7",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1210,
+        "y": 940,
+        "wires": [
+            [
+                "1d9142d1c980cc54"
+            ]
+        ]
+    },
+    {
+        "id": "073255701db0f475",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86400",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 820,
+        "wires": [
+            [
+                "cca67c22f5e01240"
+            ]
+        ]
+    },
+    {
+        "id": "e0a064dbb52fbef3",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1550,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "cca67c22f5e01240",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "WY",
+        "func": "msg.query = `\nWITH combined AS (\n  SELECT \n    w.recorded_at,\n    w.water_in,\n    w.water_out,\n    b.air_cooling_water_building2,\n    b.water_usage_building2,\n    b.reused_treated_water,\n    b.drinking_water,\n    b.air_cooling_water_building1,\n    b.water_usage_building1\n  FROM water_meters w\n  LEFT JOIN building_water_meters b\n    ON DATE_TRUNC('minute', w.recorded_at) = DATE_TRUNC('minute', b.recorded_at)\n  WHERE w.recorded_at >= date_trunc('year', CURRENT_DATE)\n    AND w.recorded_at < (date_trunc('year', CURRENT_DATE) + INTERVAL '1 year')\n),\ncalc AS (\n  SELECT\n    recorded_at,\n\n    CASE\n      WHEN LAG(water_in) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN water_in >= LAG(water_in) OVER (ORDER BY recorded_at)\n        THEN water_in - LAG(water_in) OVER (ORDER BY recorded_at)\n      ELSE water_in + LAG(water_in) OVER (ORDER BY recorded_at)\n    END AS water_in_calc,\n\n    CASE\n      WHEN LAG(water_out) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN water_out >= LAG(water_out) OVER (ORDER BY recorded_at)\n        THEN water_out - LAG(water_out) OVER (ORDER BY recorded_at)\n      ELSE water_out + LAG(water_out) OVER (ORDER BY recorded_at)\n    END AS water_out_calc,\n\n    CASE\n      WHEN LAG(water_usage_building1) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN water_usage_building1 >= LAG(water_usage_building1) OVER (ORDER BY recorded_at)\n        THEN water_usage_building1 - LAG(water_usage_building1) OVER (ORDER BY recorded_at)\n      ELSE water_usage_building1 + LAG(water_usage_building1) OVER (ORDER BY recorded_at)\n    END AS building1_usage_calc,\n\n    CASE\n      WHEN LAG(water_usage_building2) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN water_usage_building2 >= LAG(water_usage_building2) OVER (ORDER BY recorded_at)\n        THEN water_usage_building2 - LAG(water_usage_building2) OVER (ORDER BY recorded_at)\n      ELSE water_usage_building2 + LAG(water_usage_building2) OVER (ORDER BY recorded_at)\n    END AS building2_usage_calc\n\n  FROM combined\n)\n\nSELECT\n  SUM(water_in_calc + water_out_calc + building1_usage_calc + building2_usage_calc) AS total_sum_wateryear\nFROM calc;\n`;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 820,
+        "wires": [
+            [
+                "463fee5a2ed81a9b"
+            ]
+        ]
+    },
+    {
+        "id": "5fd3b57e2f797818",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "WM",
+        "func": "msg.query = `\nWITH combined AS (\n  SELECT \n    w.recorded_at,\n    w.water_in,\n    w.water_out,\n    b.water_usage_building1,\n    b.water_usage_building2\n  FROM water_meters w\n  LEFT JOIN building_water_meters b\n    ON DATE_TRUNC('minute', w.recorded_at) = DATE_TRUNC('minute', b.recorded_at)\n  WHERE w.recorded_at >= date_trunc('month', CURRENT_DATE)\n    AND w.recorded_at < (date_trunc('month', CURRENT_DATE) + INTERVAL '1 month')\n),\ncalc AS (\n  SELECT\n    recorded_at,\n\n    CASE\n      WHEN LAG(water_in) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN water_in >= LAG(water_in) OVER (ORDER BY recorded_at)\n        THEN water_in - LAG(water_in) OVER (ORDER BY recorded_at)\n      ELSE water_in + LAG(water_in) OVER (ORDER BY recorded_at)\n    END AS water_in_calc,\n\n    CASE\n      WHEN LAG(water_out) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN water_out >= LAG(water_out) OVER (ORDER BY recorded_at)\n        THEN water_out - LAG(water_out) OVER (ORDER BY recorded_at)\n      ELSE water_out + LAG(water_out) OVER (ORDER BY recorded_at)\n    END AS water_out_calc,\n\n    CASE\n      WHEN LAG(water_usage_building1) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN water_usage_building1 >= LAG(water_usage_building1) OVER (ORDER BY recorded_at)\n        THEN water_usage_building1 - LAG(water_usage_building1) OVER (ORDER BY recorded_at)\n      ELSE water_usage_building1 + LAG(water_usage_building1) OVER (ORDER BY recorded_at)\n    END AS building1_usage_calc,\n\n    CASE\n      WHEN LAG(water_usage_building2) OVER (ORDER BY recorded_at) IS NULL THEN 0\n      WHEN water_usage_building2 >= LAG(water_usage_building2) OVER (ORDER BY recorded_at)\n        THEN water_usage_building2 - LAG(water_usage_building2) OVER (ORDER BY recorded_at)\n      ELSE water_usage_building2 + LAG(water_usage_building2) OVER (ORDER BY recorded_at)\n    END AS building2_usage_calc\n\n  FROM combined\n)\n\nSELECT\n  SUM(water_in_calc + water_out_calc + building1_usage_calc + building2_usage_calc) AS total_sum_watermonth\nFROM calc;\n`;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 880,
+        "wires": [
+            [
+                "e5ea2ae540adf7a8"
+            ]
+        ]
+    },
+    {
+        "id": "1a2532a0e1b59b59",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "WD",
+        "func": "msg.query = `\nWITH last_values AS (\n  SELECT\n    DATE(recorded_at) AS date,\n    MAX(recorded_at) AS max_time\n  FROM water_meters\n  WHERE recorded_at::date IN (CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE - INTERVAL '2 day')\n  GROUP BY DATE(recorded_at)\n),\ncombined AS (\n  SELECT\n    w.recorded_at,\n    w.water_in,\n    w.water_out,\n    b.water_usage_building1,\n    b.water_usage_building2\n  FROM water_meters w\n  LEFT JOIN building_water_meters b\n    ON DATE_TRUNC('minute', w.recorded_at) = DATE_TRUNC('minute', b.recorded_at)\n  WHERE w.recorded_at IN (\n    SELECT max_time FROM last_values\n  )\n),\ndiff AS (\n  SELECT\n    MAX(CASE WHEN DATE(recorded_at) = CURRENT_DATE - INTERVAL '2 day' THEN water_in END) AS water_in_day_before,\n    MAX(CASE WHEN DATE(recorded_at) = CURRENT_DATE - INTERVAL '1 day' THEN water_in END) AS water_in_yesterday,\n\n    MAX(CASE WHEN DATE(recorded_at) = CURRENT_DATE - INTERVAL '2 day' THEN water_out END) AS water_out_day_before,\n    MAX(CASE WHEN DATE(recorded_at) = CURRENT_DATE - INTERVAL '1 day' THEN water_out END) AS water_out_yesterday,\n\n    MAX(CASE WHEN DATE(recorded_at) = CURRENT_DATE - INTERVAL '2 day' THEN water_usage_building1 END) AS b1_day_before,\n    MAX(CASE WHEN DATE(recorded_at) = CURRENT_DATE - INTERVAL '1 day' THEN water_usage_building1 END) AS b1_yesterday,\n\n    MAX(CASE WHEN DATE(recorded_at) = CURRENT_DATE - INTERVAL '2 day' THEN water_usage_building2 END) AS b2_day_before,\n    MAX(CASE WHEN DATE(recorded_at) = CURRENT_DATE - INTERVAL '1 day' THEN water_usage_building2 END) AS b2_yesterday\n  FROM combined\n)\n\nSELECT\n  ((water_in_yesterday - water_in_day_before)\n   + (water_out_yesterday - water_out_day_before)\n   + (b1_yesterday - b1_day_before)\n   + (b2_yesterday - b2_day_before)\n  ) AS total_sum_wateryesterday\nFROM diff;\n`;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 940,
+        "wires": [
+            [
+                "2202504b745398c7"
+            ]
+        ]
+    },
+    {
+        "id": "463fee5a2ed81a9b",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1210,
+        "y": 820,
+        "wires": [
+            [
+                "5fe142f05d87c40e"
+            ]
+        ]
+    },
+    {
+        "id": "e5ea2ae540adf7a8",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1210,
+        "y": 880,
+        "wires": [
+            [
+                "bd98481165c3fadf"
+            ]
+        ]
+    },
+    {
+        "id": "71ee5d0dc51ef9d2",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1210,
+        "y": 1000,
+        "wires": [
+            [
+                "b3542fe64c3e3a5b"
+            ]
+        ]
+    },
+    {
+        "id": "0607d21513f08dea",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1210,
+        "y": 1060,
+        "wires": [
+            [
+                "4c4027d7dd818afc"
+            ]
+        ]
+    },
+    {
+        "id": "c73df2be70e03847",
+        "type": "postgresql",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "query": "SELECT * FROM ;",
+        "postgreSQLConfig": "d850a9184af5f0fe",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1210,
+        "y": 1120,
+        "wires": [
+            [
+                "a4998dc03858e7b2"
+            ]
+        ]
+    },
+    {
+        "id": "1d9142d1c980cc54",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "SET GLOBAL",
+        "func": "let data = msg.payload[0];\nglobal.set('total_sum_wateryesterday', data.total_sum_wateryesterday);\nmsg.payload = data.total_sum_wateryesterday;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1390,
+        "y": 940,
+        "wires": [
+            [
+                "e0a064dbb52fbef3"
+            ]
+        ]
+    },
+    {
+        "id": "90ea60ba53c0ae0a",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1550,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "b3542fe64c3e3a5b",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "SET GLOBAL",
+        "func": "let data = msg.payload[0];\nglobal.set('total_sum_poweryear', data.total_sum_poweryear);\nmsg.payload = data.total_sum_poweryear;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1390,
+        "y": 1000,
+        "wires": [
+            [
+                "90ea60ba53c0ae0a"
+            ]
+        ]
+    },
+    {
+        "id": "0976cdbed00d605d",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1550,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "4c4027d7dd818afc",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "SET GLOBAL",
+        "func": "let data = msg.payload[0];\nglobal.set('total_sum_powermonth', data.total_sum_powermonth);\nmsg.payload = data.total_sum_powermonth;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1390,
+        "y": 1060,
+        "wires": [
+            [
+                "0976cdbed00d605d"
+            ]
+        ]
+    },
+    {
+        "id": "13f0ba069d5559a8",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1550,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "a4998dc03858e7b2",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "SET GLOBAL",
+        "func": "let data = msg.payload[0];\nglobal.set('total_sum_poweryesterday', data.total_sum_poweryesterday);\nmsg.payload = data.total_sum_poweryesterday;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1390,
+        "y": 1120,
+        "wires": [
+            [
+                "13f0ba069d5559a8"
+            ]
+        ]
+    },
+    {
+        "id": "4ff64a2db079326e",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1550,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "bd98481165c3fadf",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "SET GLOBAL",
+        "func": "let data = msg.payload[0];\nglobal.set('total_sum_watermonth', data.total_sum_watermonth);\nmsg.payload = data.total_sum_watermonth;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1390,
+        "y": 880,
+        "wires": [
+            [
+                "4ff64a2db079326e"
+            ]
+        ]
+    },
+    {
+        "id": "ce9e4431c2d29486",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1550,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "5fe142f05d87c40e",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "SET GLOBAL",
+        "func": "let data = msg.payload[0];\nglobal.set('total_sum_wateryear', data.total_sum_wateryear);\nmsg.payload = data.total_sum_wateryear;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1390,
+        "y": 820,
+        "wires": [
+            [
+                "ce9e4431c2d29486"
+            ]
+        ]
+    },
+    {
+        "id": "cca58f7cda2b9781",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 1480,
+        "wires": [
+            [
+                "184e3631eb0b962f"
+            ]
+        ]
+    },
+    {
+        "id": "33f4c80dee2054e0",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 1420,
+        "wires": [
+            [
+                "19b0d81e225038c6"
+            ]
+        ]
+    },
+    {
+        "id": "c2c7712cf0c8a630",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "หน้าย่อย : น้ำ",
+        "info": "",
+        "x": 850,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "c06d9b9fa3affe2b",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "หน้าย่อย : ไฟฟ้า",
+        "info": "",
+        "x": 860,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "5b12941bb6e5a492",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "หน้าย่อย : ปี/เดือน/เมื่อวาน",
+        "info": "",
+        "x": 890,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "4c975ac82aa7849e",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86400",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 880,
+        "wires": [
+            [
+                "5fd3b57e2f797818"
+            ]
+        ]
+    },
+    {
+        "id": "f8aac7f8f7073499",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86400",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 940,
+        "wires": [
+            [
+                "1a2532a0e1b59b59"
+            ]
+        ]
+    },
+    {
+        "id": "e063c17d2d24cd8b",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86400",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 1000,
+        "wires": [
+            [
+                "47cc02d9d077688c"
+            ]
+        ]
+    },
+    {
+        "id": "409b95c61a1dca4f",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86400",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 1060,
+        "wires": [
+            [
+                "63b30976ee558e75"
+            ]
+        ]
+    },
+    {
+        "id": "18ed79885b3e59a4",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86400",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 1120,
+        "wires": [
+            [
+                "44a1c833db6bc58b"
+            ]
+        ]
+    },
+    {
+        "id": "dd46eccc1f3534df",
+        "type": "function",
+        "z": "3ad1f59be65d94d1",
+        "name": "STATUS",
+        "func": "var max_treatment_tank = global.get(\"max_treatment_tank\") || 0;\nvar min_treatment_tank = global.get(\"min_treatment_tank\") || 0;\nvar voltage_R_treatment_pond = global.get(\"voltage_R_treatment_pond\") || 0;\nvar voltage_S_treatment_pond = global.get(\"voltage_S_treatment_pond\") || 0;\nvar voltage_T_treatment_pond = global.get(\"voltage_T_treatment_pond\") || 0;\n\nvar voltage_R_wastewater_pump_building1 = global.get(\"voltage_R_wastewater_pump_building1\") || 0;\nvar voltage_S_wastewater_pump_building1 = global.get(\"voltage_S_wastewater_pump_building1\") || 0;\nvar voltage_T_wastewater_pump_building1 = global.get(\"voltage_T_wastewater_pump_building1\") || 0;\nvar max_waste_pump_b1 = global.get(\"max_waste_pump_b1\") || 0;\nvar min_waste_pump_b1 = global.get(\"min_waste_pump_b1\") || 0;\n\nvar voltage_R_wastewater_pump_building2 = global.get(\"voltage_R_wastewater_pump_building2\") || 0;\nvar voltage_S_wastewater_pump_building2 = global.get(\"voltage_S_wastewater_pump_building2\") || 0;\nvar voltage_T_wastewater_pump_building2 = global.get(\"voltage_T_wastewater_pump_building2\") || 0;\nvar max_waste_pump_b2 = global.get(\"max_waste_pump_b2\") || 0;\nvar min_waste_pump_b2 = global.get(\"min_waste_pump_b2\") || 0;\n\nvar max_water_in = global.get(\"max_water_in\") || 0;\nvar water_in = Number(((global.get(\"water_in\") || 0) - (global.get(\"yesterday_water_in\") || 0)).toFixed(2));\n\nvar max_water_out = global.get(\"max_water_out\") || 0;\nvar water_out = Number(((global.get(\"water_out\") || 0) - (global.get(\"yesterday_water_out\") || 0)).toFixed(2));\n\nvar max_water_usage_b2 = global.get(\"max_water_usage_b2\") || 0;\nvar water_usage_building2 = Number(((global.get(\"water_usage_building2\") || 0) - (global.get(\"yesterday_water_usage_b2\") || 0)).toFixed(2));\n\nvar max_water_usage_b1 = global.get(\"max_water_usage_b1\") || 0;\nvar water_usage_building1 = Number(((global.get(\"water_usage_building1\") || 0) - (global.get(\"yesterday_water_usage_b1\") || 0)).toFixed(2));\n\nvar max_drinking_water = global.get(\"max_drinking_water\") || 0;\nvar drinking_water = Number(((global.get(\"drinking_water\") || 0) - (global.get(\"yesterday_drinking_water\") || 0)).toFixed(2));\n\nvar max_cooling_water_b1 = global.get(\"max_cooling_water_b1\") || 0;\nvar air_cooling_water_building1 = Number(((global.get(\"air_cooling_water_building1\") || 0) - (global.get(\"yesterday_cooling_water_b1\") || 0)).toFixed(2));\n\nvar max_cooling_water_b2 = global.get(\"max_cooling_water_b2\") || 0;\nvar air_cooling_water_building2 = Number(((global.get(\"air_cooling_water_building2\") || 0) - (global.get(\"yesterday_cooling_water_b2\") || 0)).toFixed(2));\n\nvar max_reused_water = global.get(\"max_reused_water\") || 0;\nvar reused_treated_water = Number(((global.get(\"reused_treated_water\") || 0) - (global.get(\"yesterday_reused_water\") || 0)).toFixed(2));\n\nvar point = 0;\n\nif (\n    (voltage_R_treatment_pond < min_treatment_tank || voltage_R_treatment_pond > max_treatment_tank) &&\n    (voltage_S_treatment_pond < min_treatment_tank || voltage_S_treatment_pond > max_treatment_tank) &&\n    (voltage_T_treatment_pond < min_treatment_tank || voltage_T_treatment_pond > max_treatment_tank) &&\n    (voltage_R_wastewater_pump_building1 < min_waste_pump_b1 || voltage_R_wastewater_pump_building1 > max_waste_pump_b1) &&\n    (voltage_S_wastewater_pump_building1 < min_waste_pump_b1 || voltage_S_wastewater_pump_building1 > max_waste_pump_b1) &&\n    (voltage_T_wastewater_pump_building1 < min_waste_pump_b1 || voltage_T_wastewater_pump_building1 > max_waste_pump_b1) &&\n    (voltage_R_wastewater_pump_building2 < min_waste_pump_b2 || voltage_R_wastewater_pump_building2 > max_waste_pump_b2) &&\n    (voltage_S_wastewater_pump_building2 < min_waste_pump_b2 || voltage_S_wastewater_pump_building2 > max_waste_pump_b2) &&\n    (voltage_T_wastewater_pump_building2 < min_waste_pump_b2 || voltage_T_wastewater_pump_building2 > max_waste_pump_b2) &&\n    (max_water_in < water_in) &&\n    (max_water_out < water_out) &&\n    (max_water_usage_b2 < water_usage_building2) &&\n    (max_water_usage_b1 < water_usage_building1) &&\n    (max_drinking_water < drinking_water) &&\n    (max_cooling_water_b1 < air_cooling_water_building1) &&\n    (max_cooling_water_b2 < air_cooling_water_building2) &&\n    (max_reused_water < reused_treated_water)\n) {\n    point = 1;\n}\n\nglobal.set(\"status_check\", point);\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 1600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dfc2f003dfdf2330",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1420,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "6054d006e5b606a1",
+        "type": "inject",
+        "z": "3ad1f59be65d94d1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 870,
+        "y": 1600,
+        "wires": [
+            [
+                "dd46eccc1f3534df"
+            ]
+        ]
+    },
+    {
+        "id": "9f132cd642c7cb66",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "debug 15",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1320,
+        "y": 1280,
+        "wires": []
+    },
+    {
+        "id": "d3dade57083b8a52",
+        "type": "debug",
+        "z": "3ad1f59be65d94d1",
+        "name": "threshold",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1620,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "3fa55d62c75da87c",
+        "type": "comment",
+        "z": "3ad1f59be65d94d1",
+        "name": "Status",
+        "info": "",
+        "x": 830,
+        "y": 1540,
+        "wires": []
+    },
+    {
+        "id": "d850a9184af5f0fe",
+        "type": "postgreSQLConfig",
+        "name": "",
+        "host": "127.0.0.1",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "main_meter_db",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "postgres",
+        "userFieldType": "str",
+        "password": "aniwat2561",
+        "passwordFieldType": "str"
+    },
+    {
+        "id": "5bce3b87ac2499e3",
+        "type": "websocket-listener",
+        "path": "/ws/water_in",
+        "wholemsg": "false"
+    },
+    {
+        "id": "bf2551346b5d5ca7",
+        "type": "websocket-listener",
+        "path": "/ws/water_out",
+        "wholemsg": "false"
+    },
+    {
+        "id": "16f0c80a8cca07fb",
+        "type": "websocket-listener",
+        "path": "/ws/water_usage_building2",
+        "wholemsg": "false"
+    },
+    {
+        "id": "757ea9eb2d3f60fe",
+        "type": "websocket-listener",
+        "path": "/ws/air_cooling_water_building2",
+        "wholemsg": "false"
+    },
+    {
+        "id": "76d1d6b6bef6c227",
+        "type": "websocket-listener",
+        "path": "/ws/reused_treated_water",
+        "wholemsg": "false"
+    },
+    {
+        "id": "41ae5b46de19e7f4",
+        "type": "websocket-listener",
+        "path": "/ws/drinking_water",
+        "wholemsg": "false"
+    },
+    {
+        "id": "09b555b2b08b269f",
+        "type": "websocket-listener",
+        "path": "/ws/air_cooling_water_building1",
+        "wholemsg": "false"
+    },
+    {
+        "id": "731b6984167a5676",
+        "type": "websocket-listener",
+        "path": "/ws/water_usage_building1",
+        "wholemsg": "false"
+    },
+    {
+        "id": "d51475ba362dba17",
+        "type": "websocket-listener",
+        "path": "/ws/wastewater_pump_building1",
+        "wholemsg": "false"
+    },
+    {
+        "id": "872a2fac46a293b2",
+        "type": "websocket-listener",
+        "path": "/ws/treatment_pond",
+        "wholemsg": "false"
+    },
+    {
+        "id": "f171e2541e24e08c",
+        "type": "websocket-listener",
+        "path": "/ws/wastewater_pump_building2",
+        "wholemsg": "false"
+    },
+    {
+        "id": "d7bbf80511aed649",
+        "type": "modbus-client",
+        "name": "Node 1",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.16.52.1",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": 1,
+        "commandDelay": 1,
+        "clientTimeout": 1000,
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": 2000,
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "e4b839701666c22b",
+        "type": "modbus-client",
+        "name": "Node 2",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.16.52.1",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": 2,
+        "commandDelay": 1,
+        "clientTimeout": 1000,
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": 2000,
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "ff55a5ed698b5215",
+        "type": "modbus-client",
+        "name": "Node 3",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.16.52.1",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": "3",
+        "commandDelay": "1",
+        "clientTimeout": "1000",
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": "2000",
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "85a84d3fd048de03",
+        "type": "modbus-client",
+        "name": "Node 5",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.16.52.1",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": "5",
+        "commandDelay": "1",
+        "clientTimeout": "1000",
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": "2000",
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "ec708b990f287786",
+        "type": "modbus-client",
+        "name": "Node 4",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.16.52.1",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": 4,
+        "commandDelay": 1,
+        "clientTimeout": 1000,
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": 2000,
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "db400483bda135fa",
+        "type": "modbus-client",
+        "name": "m3-3",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.16.52.10",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": 1,
+        "commandDelay": 1,
+        "clientTimeout": 1000,
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": 2000,
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "df75c817f8c01570",
+        "type": "modbus-client",
+        "name": "m4-4",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.16.52.11",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": "2",
+        "commandDelay": "1",
+        "clientTimeout": "1000",
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": "2000",
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "ce6c962faba28be2",
+        "type": "modbus-client",
+        "name": "m5-5",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.16.52.7",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": "4",
+        "commandDelay": "1",
+        "clientTimeout": "1000",
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": "2000",
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "8339aaeefc9451f2",
+        "type": "modbus-client",
+        "name": "m2-2",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.16.52.10",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": "2",
+        "commandDelay": "1",
+        "clientTimeout": "1000",
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": "2000",
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "8aca6cb46b0e42b1",
+        "type": "modbus-client",
+        "name": "m1-1",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.16.52.9",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": "1",
+        "commandDelay": "1",
+        "clientTimeout": "3000",
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": "2000",
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "c6802708320b7c88",
+        "type": "modbus-client",
+        "name": "m1-3",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.16.52.9",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": 3,
+        "commandDelay": 1,
+        "clientTimeout": 1000,
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": 2000,
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "888be62b0d45bdd0",
+        "type": "websocket-listener",
+        "path": "/ws/w",
+        "wholemsg": "false"
+    },
+    {
+        "id": "d503565c9fb993b4",
+        "type": "websocket-listener",
+        "path": "/ws/dashboard",
+        "wholemsg": "false"
+    }
+]
