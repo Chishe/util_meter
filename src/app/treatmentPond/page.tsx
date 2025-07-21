@@ -14,24 +14,37 @@ export default function Page() {
   });
 
   useEffect(() => {
-    const socket = new WebSocket("ws://172.16.0.71:1880/ws/meter1");
+    const socket = new WebSocket("ws://172.16.0.71:1880/ws/treatment_pond");
 
-    socket.addEventListener("message", (event) => {
-      const res = JSON.parse(event.data);
+    socket.onmessage = (event) => {
+      try {
+        const res = JSON.parse(event.data);
+        console.log("Parsed data:", res);
 
-      setData({
-        kwh: `${res.kwh} kWh`,
-        voltage_R: res.voltage_R,
-        voltage_S: res.voltage_S,
-        voltage_T: res.voltage_T,
-        current_R: res.Current_R,
-        current_S: res.Current_S,
-        current_T: res.Current_T,
-      });
-    });
+        const kwhNow = Number(res.kwh) || 0;
+        const kwhYesterday = Number(res.yesterday) || 0;
 
-    return () => socket.close();
+        setData({
+          kwh: `${(kwhNow - kwhYesterday).toFixed(2)} kWh`,
+          voltage_R: res.voltage_R ?? "-",
+          voltage_S: res.voltage_S ?? "-",
+          voltage_T: res.voltage_T ?? "-",
+          current_R: res.current_R ?? "-",
+          current_S: res.current_S ?? "-",
+          current_T: res.current_T ?? "-",
+        });
+      } catch (e) {
+        console.error("JSON parse error:", e);
+      }
+    };
+
+    return () => {
+      console.log("Cleaning up socket");
+      socket.close();
+    };
   }, []);
+
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -134,7 +147,7 @@ export default function Page() {
       {/* กราฟ */}
       <div className="flex justify-center w-full scroll-wrapper rounded-md shadow bg-zinc-900">
         <VoltageChart
-          ws="ws://172.16.0.71:1880/ws/meter1"
+          ws="ws://172.16.0.71:1880/ws/treatment_pond"
           minmaxUrl="/api/threshold?tag=บ่อบำบัด"
         />
       </div>

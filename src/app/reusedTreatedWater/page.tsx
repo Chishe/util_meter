@@ -9,13 +9,13 @@ export default function Page() {
   });
 
   useEffect(() => {
-    const socket = new WebSocket("ws://172.16.0.71:1880/ws/meter2");
+    const socket = new WebSocket("ws://172.16.0.71:1880/ws/w");
 
     socket.addEventListener("message", (event) => {
       const res = JSON.parse(event.data);
 
       setData({
-        m3: `${res.m3} m3`,
+        m3: `${res.reused_treated_water} m3`,
       });
     });
 
@@ -50,7 +50,8 @@ export default function Page() {
 
       <div className="flex justify-center w-full scroll-wrapper rounded-md shadow bg-zinc-900">
         <CubeChart
-          ws="ws://172.16.0.71:1880/ws/meter1"
+          ws="ws://172.16.0.71:1880/ws/w"
+          dataKey="reused_treated_water"
           minmaxUrl="/api/threshold?tag=น้ำบำบัดกลับมาใช้ใหม่"
         />
       </div>

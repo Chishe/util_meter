@@ -24,9 +24,10 @@ ChartJS.register(
 interface Props {
   ws: string;
   minmaxUrl: string;
+  dataKey: string
 }
 
-export default function VoltageChart({ ws, minmaxUrl }: Props) {
+export default function VoltageChart({ ws, minmaxUrl, dataKey }: Props) {
   const [labels, setLabels] = useState<string[]>([]);
   const [voltageR, setM3] = useState<number[]>([]);
   const [upperLine, setUpperLine] = useState<number[]>([]);
@@ -51,7 +52,7 @@ export default function VoltageChart({ ws, minmaxUrl }: Props) {
       const time = new Date().toLocaleTimeString();
 
       setLabels((prev) => [...prev.slice(-29), time]);
-      setM3((prev) => [...prev.slice(-29), res.m3]);
+      setM3((prev) => [...prev.slice(-29), res[dataKey] ?? 0]);
       setUpperLine((prev) => [...prev.slice(-29), max]);
     };
 

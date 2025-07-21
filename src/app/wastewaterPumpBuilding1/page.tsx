@@ -19,14 +19,17 @@ export default function Page() {
     socket.addEventListener("message", (event) => {
       const res = JSON.parse(event.data);
 
+      const kwhNow = Number(res.kwh) || 0;
+      const kwhYesterday = Number(res.yesterday) || 0;
+
       setData({
-        kwh: `${res.kwh} kWh`,
+        kwh: `${(kwhNow - kwhYesterday).toFixed(2)} kWh`,
         voltage_R: res.voltage_R,
         voltage_S: res.voltage_S,
         voltage_T: res.voltage_T,
-        current_R: res.Current_R,
-        current_S: res.Current_S,
-        current_T: res.Current_T,
+        current_R: res.current_R,
+        current_S: res.current_S,
+        current_T: res.current_T,
       });
     });
 
@@ -134,7 +137,7 @@ export default function Page() {
       {/* กราฟ */}
       <div className="flex justify-center w-full scroll-wrapper rounded-md shadow bg-zinc-900">
         <VoltageChart
-          ws="ws://172.16.0.71:1880/ws/meter1"
+          ws="ws://172.16.0.71:1880/ws/wastewater_pump_building1"
           minmaxUrl="/api/threshold?tag=บ่อสูบน้ำเสียอาคาร 1"
         />
       </div>

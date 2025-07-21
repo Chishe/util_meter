@@ -8,13 +8,13 @@ export default function Page() {
   });
 
   useEffect(() => {
-    const socket = new WebSocket("ws://172.16.0.71:1880/ws/water_in");
+    const socket = new WebSocket("ws://172.16.0.71:1880/ws/w");
 
     socket.addEventListener("message", (event) => {
       const res = JSON.parse(event.data);
 
       setData({
-        m3: `${res.m3} m3`,
+        m3: `${res.water_in} m3`,
       });
     });
 
@@ -42,14 +42,15 @@ export default function Page() {
         {/* ขวา */}
         <div className="bg-muted/50 aspect-video rounded-xl p-4 overflow-auto flex justify-center items-center  h-[250px] w-full">
           <div className="flex flex-col items-center justify-center h-full">
-            <StopAlarmButton location="น้ำเข้า" status="Stop Alarm"/>
+            <StopAlarmButton location="น้ำเข้า" status="Stop Alarm" />
           </div>
         </div>
       </div>
 
       <div className="flex justify-center w-full scroll-wrapper rounded-md shadow bg-zinc-900">
         <CubeChart
-          ws="ws://172.16.0.71:1880/ws/meter1"
+          ws="ws://172.16.0.71:1880/ws/w"
+          dataKey="water_in"
           minmaxUrl="/api/threshold?tag=น้ำเข้า"
         />
       </div>
