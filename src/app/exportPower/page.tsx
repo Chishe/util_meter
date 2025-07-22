@@ -229,7 +229,7 @@ export default function Page() {
           wastewater_pump_building2={data.map(
             (d) => d.wastewater_pump_building2
           )}
-          treatment_pond={data.map((d) => d.wastewater_pump_building2)}
+          treatment_pond={data.map((d) => d.treatment_pond)}
         />
       </div>
       <div className="overflow-auto">
