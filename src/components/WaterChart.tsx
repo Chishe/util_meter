@@ -50,6 +50,10 @@ export function WaterChart({
         options={{
           responsive: true,
           maintainAspectRatio: false,
+          interaction:{
+            mode:'index',
+            intersect:false
+          },
           plugins: {
             title: {
               display: true,
@@ -64,6 +68,10 @@ export function WaterChart({
               labels: {
                 color: "#fff", // ทำให้ legend เป็นสีขาว
               },
+            },
+            tooltip:{
+              mode:'index',
+              intersect:false,
             },
           },
           scales: {

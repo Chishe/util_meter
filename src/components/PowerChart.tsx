@@ -47,7 +47,7 @@ export function PowerChart({
               data: wastewater_pump_building2,
               backgroundColor: "#20B2AA",
             },
-                       {
+            {
               label: "บ่อบำบัด",
               data: treatment_pond,
               backgroundColor: "#28b463",
@@ -57,6 +57,10 @@ export function PowerChart({
         options={{
           responsive: true,
           maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
           plugins: {
             title: {
               display: true,
@@ -71,6 +75,10 @@ export function PowerChart({
               labels: {
                 color: "#fff", // ทำให้ legend เป็นสีขาว
               },
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
             },
           },
           scales: {

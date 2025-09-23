@@ -57,8 +57,8 @@ export default function Page() {
           reportType === "yearly"
             ? item.year
             : reportType === "monthly"
-            ? thaiMonths[new Date(item.month).getMonth()]
-            : new Date(item.day).toLocaleDateString("th-TH");
+              ? thaiMonths[new Date(item.month).getMonth()]
+              : new Date(item.day).toLocaleDateString("th-TH");
 
         return {
           label,
@@ -85,7 +85,7 @@ export default function Page() {
       "ช่วงเวลา,น้ำดื่ม,น้ำแอร์รังผึ้งอาคาร 1,น้ำแอร์รังผึ้งอาคาร 2,น้ำใช้อาคาร 1,น้ำใช้อาคาร 2";
     const rows = data.map(
       (d) =>
-        `${d.label},${d.drinking_water},${d.air_cooling_water_building1},${d.air_cooling_water_building2},${d.water_usage_building1},${d.water_usage_building2}`
+        `${d.label},${d.drinking_water},${d.air_cooling_water_building1},${d.water_usage_building2},${d.water_usage_building1},${d.air_cooling_water_building2}`
     );
 
     const avg = {
@@ -248,11 +248,12 @@ export default function Page() {
               <th className="px-4 py-2 text-center">
                 น้ำแอร์รังผึ้งอาคาร 1 (m³)
               </th>
-              <th className="px-4 py-2 text-center">
-                น้ำแอร์รังผึ้งอาคาร 2 (m³)
-              </th>
+
+              <th className="px-4 py-2 text-center">น้ำแอร์รังผึ้งอาคาร 2 (m³)</th>
               <th className="px-4 py-2 text-center">น้ำใช้อาคาร 1 (m³)</th>
-              <th className="px-4 py-2 text-center">น้ำใช้อาคาร 2 (m³)</th>
+              <th className="px-4 py-2 text-center">
+                น้ำใช้อาคาร 2 (m³)
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -266,13 +267,13 @@ export default function Page() {
                   {d.air_cooling_water_building1.toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {d.air_cooling_water_building2.toFixed(2)}
+                  {d.water_usage_building2.toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-center">
                   {d.water_usage_building1.toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {d.water_usage_building2.toFixed(2)}
+                  {d.air_cooling_water_building2.toFixed(2)}
                 </td>
               </tr>
             ))}

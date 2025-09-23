@@ -28,57 +28,70 @@ export async function GET(request: NextRequest) {
       const prevYear = targetYear - 1;
 
       const dataRaw = await prisma.$queryRaw<powerYearly[]>`
-    WITH years AS (
-      SELECT generate_series(${prevYear}, ${targetYear}) AS year
-    ),
-    daily_diff AS (
+      WITH years AS (
+        SELECT generate_series(${prevYear}, ${targetYear}) AS year
+      ),
+      daily_diff AS (
+        SELECT
+          DATE_TRUNC('day', p.recorded_at) AS day,
+          SUM(p.wastewater_pump_building1) AS wastewater_pump_building1,
+          SUM(p.wastewater_pump_building2) AS wastewater_pump_building2,
+          SUM(p.treatment_pond) AS treatment_pond
+        FROM power_meters p
+        WHERE EXTRACT(YEAR FROM p.recorded_at) IN (${prevYear}, ${targetYear})
+        GROUP BY DATE_TRUNC('day', p.recorded_at)
+      ),
+      daily_diff_calc AS (
+        SELECT
+          day,
+          ROUND((
+            CASE
+              WHEN LEAD(wastewater_pump_building1) OVER (ORDER BY day) IS NULL THEN NULL
+              WHEN LEAD(wastewater_pump_building1) OVER (ORDER BY day) < wastewater_pump_building1 THEN
+                LEAD(wastewater_pump_building1) OVER (ORDER BY day) + wastewater_pump_building1
+              ELSE
+                LEAD(wastewater_pump_building1) OVER (ORDER BY day) - wastewater_pump_building1
+            END
+          )::numeric, 2) AS wastewater_pump_building1_diff,
+          ROUND((
+            CASE
+              WHEN LEAD(wastewater_pump_building2) OVER (ORDER BY day) IS NULL THEN NULL
+              WHEN LEAD(wastewater_pump_building2) OVER (ORDER BY day) < wastewater_pump_building2 THEN
+                LEAD(wastewater_pump_building2) OVER (ORDER BY day) + wastewater_pump_building2
+              ELSE
+                LEAD(wastewater_pump_building2) OVER (ORDER BY day) - wastewater_pump_building2
+            END
+          )::numeric, 2) AS wastewater_pump_building2_diff,
+          ROUND((
+            CASE
+              WHEN LEAD(treatment_pond) OVER (ORDER BY day) IS NULL THEN NULL
+              WHEN LEAD(treatment_pond) OVER (ORDER BY day) < treatment_pond THEN
+                LEAD(treatment_pond) OVER (ORDER BY day) + treatment_pond
+              ELSE
+                LEAD(treatment_pond) OVER (ORDER BY day) - treatment_pond
+            END
+          )::numeric, 2) AS treatment_pond_diff
+        FROM daily_diff
+      ),
+      yearly_agg AS (
+        SELECT
+          EXTRACT(YEAR FROM day) AS year,
+          SUM(wastewater_pump_building1_diff) AS wastewater_pump_building1,
+          SUM(wastewater_pump_building2_diff) AS wastewater_pump_building2,
+          SUM(treatment_pond_diff) AS treatment_pond
+        FROM daily_diff_calc
+        GROUP BY year
+      )
       SELECT
-        DATE_TRUNC('day', p.recorded_at) AS day,
-        SUM(p.wastewater_pump_building1) AS wastewater_pump_building1,
-        SUM(p.wastewater_pump_building2) AS wastewater_pump_building2,
-        SUM(p.treatment_pond) AS treatment_pond
-      FROM power_meters p
-      WHERE EXTRACT(YEAR FROM p.recorded_at) IN (${prevYear}, ${targetYear})
-      GROUP BY DATE_TRUNC('day', p.recorded_at)
-    ),
-    daily_diff_calc AS (
-      SELECT
-        day,
-        CASE
-          WHEN LAG(wastewater_pump_building1) OVER (ORDER BY day) IS NULL THEN NULL
-          WHEN wastewater_pump_building1 >= LAG(wastewater_pump_building1) OVER (ORDER BY day) THEN wastewater_pump_building1 - LAG(wastewater_pump_building1) OVER (ORDER BY day)
-          ELSE wastewater_pump_building1 + LAG(wastewater_pump_building1) OVER (ORDER BY day)
-        END AS wastewater_pump_building1_diff,
-        CASE
-          WHEN LAG(wastewater_pump_building2) OVER (ORDER BY day) IS NULL THEN NULL
-          WHEN wastewater_pump_building2 >= LAG(wastewater_pump_building2) OVER (ORDER BY day) THEN wastewater_pump_building2 - LAG(wastewater_pump_building2) OVER (ORDER BY day)
-          ELSE wastewater_pump_building2 + LAG(wastewater_pump_building2) OVER (ORDER BY day)
-        END AS wastewater_pump_building2_diff,
-        CASE
-          WHEN LAG(treatment_pond) OVER (ORDER BY day) IS NULL THEN NULL
-          WHEN treatment_pond >= LAG(treatment_pond) OVER (ORDER BY day) THEN treatment_pond - LAG(treatment_pond) OVER (ORDER BY day)
-          ELSE treatment_pond + LAG(treatment_pond) OVER (ORDER BY day)
-        END AS treatment_pond_diff
-      FROM daily_diff
-    ),
-    yearly_agg AS (
-      SELECT
-        EXTRACT(YEAR FROM day) AS year,
-        SUM(wastewater_pump_building1_diff) AS wastewater_pump_building1,
-        SUM(wastewater_pump_building2_diff) AS wastewater_pump_building2,
-        SUM(treatment_pond_diff) AS treatment_pond
-      FROM daily_diff_calc
-      GROUP BY year
-    )
-    SELECT
-      y.year,
-      COALESCE(ya.wastewater_pump_building1, 0) AS wastewater_pump_building1,
-      COALESCE(ya.wastewater_pump_building2, 0) AS wastewater_pump_building2,
-      COALESCE(ya.treatment_pond, 0) AS treatment_pond
-    FROM years y
-    LEFT JOIN yearly_agg ya ON y.year = ya.year
-    ORDER BY y.year;
-  `;
+        y.year,
+        COALESCE(ya.wastewater_pump_building1, 0) AS wastewater_pump_building1,
+        COALESCE(ya.wastewater_pump_building2, 0) AS wastewater_pump_building2,
+        COALESCE(ya.treatment_pond, 0) AS treatment_pond
+      FROM years y
+      LEFT JOIN yearly_agg ya ON y.year = ya.year
+      ORDER BY y.year;
+      
+      `;
 
       const safeData = dataRaw.map((row) => ({
         year: Number(row.year),
@@ -98,90 +111,47 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(safeData);
     }
-
     if (type === "monthly") {
       const data = await prisma.$queryRaw`
-WITH months AS (
-  SELECT generate_series(
-    MAKE_DATE(CAST(${year} AS INTEGER), 1, 1),
-    MAKE_DATE(CAST(${year} AS INTEGER), 12, 1),
-    INTERVAL '1 month'
-  ) AS month
-),
-daily_diff AS (
-  SELECT
-    DATE_TRUNC('month', day) AS month,
-    CASE
-      WHEN LAG(wastewater_pump_building1) OVER (ORDER BY day) IS NULL THEN NULL
-      WHEN wastewater_pump_building1 >= LAG(wastewater_pump_building1) OVER (ORDER BY day)
-        THEN wastewater_pump_building1 - LAG(wastewater_pump_building1) OVER (ORDER BY day)
-      ELSE wastewater_pump_building1 + LAG(wastewater_pump_building1) OVER (ORDER BY day)
-    END AS wastewater_pump_building1_diff,
-    CASE
-      WHEN LAG(wastewater_pump_building2) OVER (ORDER BY day) IS NULL THEN NULL
-      WHEN wastewater_pump_building2 >= LAG(wastewater_pump_building2) OVER (ORDER BY day)
-        THEN wastewater_pump_building2 - LAG(wastewater_pump_building2) OVER (ORDER BY day)
-      ELSE wastewater_pump_building2 + LAG(wastewater_pump_building2) OVER (ORDER BY day)
-    END AS wastewater_pump_building2_diff,
-    CASE
-      WHEN LAG(treatment_pond) OVER (ORDER BY day) IS NULL THEN NULL
-      WHEN treatment_pond >= LAG(treatment_pond) OVER (ORDER BY day)
-        THEN treatment_pond - LAG(treatment_pond) OVER (ORDER BY day)
-      ELSE treatment_pond + LAG(treatment_pond) OVER (ORDER BY day)
-    END AS treatment_pond_diff
-  FROM (
-    SELECT
-      DATE_TRUNC('day', p.recorded_at) AS day,
-      SUM(p.wastewater_pump_building1) AS wastewater_pump_building1,
-      SUM(p.wastewater_pump_building2) AS wastewater_pump_building2,
-      SUM(p.treatment_pond) AS treatment_pond
-    FROM power_meters p
-    WHERE EXTRACT(YEAR FROM p.recorded_at)::int = CAST(${year} AS INTEGER)
-    GROUP BY DATE_TRUNC('day', p.recorded_at)
-  ) daily_data
-),
-monthly_agg AS (
-  SELECT
-    month,
-    SUM(wastewater_pump_building1_diff) AS wastewater_pump_building1,
-    SUM(wastewater_pump_building2_diff) AS wastewater_pump_building2,
-    SUM(treatment_pond_diff) AS treatment_pond
-  FROM daily_diff
-  GROUP BY month
-)
-SELECT
-  m.month,
-  COALESCE(ma.wastewater_pump_building1, 0) AS wastewater_pump_building1,
-  COALESCE(ma.wastewater_pump_building2, 0) AS wastewater_pump_building2,
-  COALESCE(ma.treatment_pond, 0) AS treatment_pond
-FROM months m
-LEFT JOIN monthly_agg ma
-  ON DATE_TRUNC('month', m.month) = DATE_TRUNC('month', ma.month)
-ORDER BY m.month;
-`;
-
-      return NextResponse.json(data);
-    }
-
-    if (type === "daily") {
-      const data = await prisma.$queryRaw`
+      WITH months AS (
+        SELECT generate_series(
+          MAKE_DATE(CAST(${year} AS INTEGER), 1, 1),
+          MAKE_DATE(CAST(${year} AS INTEGER), 12, 1),
+          INTERVAL '1 month'
+        ) AS month
+      ),
+      daily_diff AS (
         SELECT
-          day,
-          CASE
-            WHEN LAG(wastewater_pump_building1) OVER (ORDER BY day) IS NULL THEN NULL
-            WHEN wastewater_pump_building1 >= LAG(wastewater_pump_building1) OVER (ORDER BY day) THEN wastewater_pump_building1 - LAG(wastewater_pump_building1) OVER (ORDER BY day)
-            ELSE wastewater_pump_building1 + LAG(wastewater_pump_building1) OVER (ORDER BY day)
-          END AS wastewater_pump_building1,
-          CASE
-            WHEN LAG(wastewater_pump_building2) OVER (ORDER BY day) IS NULL THEN NULL
-            WHEN wastewater_pump_building2 >= LAG(wastewater_pump_building2) OVER (ORDER BY day) THEN wastewater_pump_building2 - LAG(wastewater_pump_building2) OVER (ORDER BY day)
-            ELSE wastewater_pump_building2 + LAG(wastewater_pump_building2) OVER (ORDER BY day)
-          END AS wastewater_pump_building2,
-          CASE
-            WHEN LAG(treatment_pond) OVER (ORDER BY day) IS NULL THEN NULL
-            WHEN treatment_pond >= LAG(treatment_pond) OVER (ORDER BY day) THEN treatment_pond - LAG(treatment_pond) OVER (ORDER BY day)
-            ELSE treatment_pond + LAG(treatment_pond) OVER (ORDER BY day)
-          END AS treatment_pond
+          DATE_TRUNC('month', day) AS month,
+          ROUND((
+            CASE
+              WHEN LEAD(wastewater_pump_building1) OVER (ORDER BY day) IS NULL THEN NULL
+              WHEN LEAD(wastewater_pump_building1) OVER (ORDER BY day) < wastewater_pump_building1 THEN
+                LEAD(wastewater_pump_building1) OVER (ORDER BY day) + wastewater_pump_building1
+              ELSE
+                LEAD(wastewater_pump_building1) OVER (ORDER BY day) - wastewater_pump_building1
+            END
+          )::numeric, 2) AS wastewater_pump_building1_diff,
+      
+          ROUND((
+            CASE
+              WHEN LEAD(wastewater_pump_building2) OVER (ORDER BY day) IS NULL THEN NULL
+              WHEN LEAD(wastewater_pump_building2) OVER (ORDER BY day) < wastewater_pump_building2 THEN
+                LEAD(wastewater_pump_building2) OVER (ORDER BY day) + wastewater_pump_building2
+              ELSE
+                LEAD(wastewater_pump_building2) OVER (ORDER BY day) - wastewater_pump_building2
+            END
+          )::numeric, 2) AS wastewater_pump_building2_diff,
+      
+          ROUND((
+            CASE
+              WHEN LEAD(treatment_pond) OVER (ORDER BY day) IS NULL THEN NULL
+              WHEN LEAD(treatment_pond) OVER (ORDER BY day) < treatment_pond THEN
+                LEAD(treatment_pond) OVER (ORDER BY day) + treatment_pond
+              ELSE
+                LEAD(treatment_pond) OVER (ORDER BY day) - treatment_pond
+            END
+          )::numeric, 2) AS treatment_pond_diff
         FROM (
           SELECT
             DATE_TRUNC('day', p.recorded_at) AS day,
@@ -189,11 +159,114 @@ ORDER BY m.month;
             SUM(p.wastewater_pump_building2) AS wastewater_pump_building2,
             SUM(p.treatment_pond) AS treatment_pond
           FROM power_meters p
-          WHERE EXTRACT(YEAR FROM p.recorded_at) = ${Number(year)}
-            AND EXTRACT(MONTH FROM p.recorded_at) = ${Number(month)}
-          GROUP BY day
+          WHERE EXTRACT(YEAR FROM p.recorded_at)::int = CAST(${year} AS INTEGER)
+          GROUP BY DATE_TRUNC('day', p.recorded_at)
         ) daily_data
-        ORDER BY day;
+      ),
+      monthly_agg AS (
+        SELECT
+          month,
+          SUM(wastewater_pump_building1_diff) AS wastewater_pump_building1,
+          SUM(wastewater_pump_building2_diff) AS wastewater_pump_building2,
+          SUM(treatment_pond_diff) AS treatment_pond
+        FROM daily_diff
+        GROUP BY month
+      )
+      SELECT
+        m.month,
+        COALESCE(ma.wastewater_pump_building1, 0) AS wastewater_pump_building1,
+        COALESCE(ma.wastewater_pump_building2, 0) AS wastewater_pump_building2,
+        COALESCE(ma.treatment_pond, 0) AS treatment_pond
+      FROM months m
+      LEFT JOIN monthly_agg ma
+        ON DATE_TRUNC('month', m.month) = DATE_TRUNC('month', ma.month)
+      ORDER BY m.month;
+      
+      `;
+
+      return NextResponse.json(data);
+    }
+
+    if (type === "daily") {
+      const data = await prisma.$queryRaw`
+      WITH daily_data AS (
+        SELECT
+          DATE_TRUNC('day', p.recorded_at) AS day,
+          SUM(p.wastewater_pump_building1) AS wastewater_pump_building1,
+          SUM(p.wastewater_pump_building2) AS wastewater_pump_building2,
+          SUM(p.treatment_pond) AS treatment_pond
+        FROM power_meters p
+        WHERE
+          (
+            EXTRACT(MONTH FROM p.recorded_at) <> 12 AND
+            EXTRACT(YEAR FROM p.recorded_at) = ${Number(year)} AND
+            EXTRACT(MONTH FROM p.recorded_at) = ${Number(month)}
+          )
+          OR
+          (
+            EXTRACT(MONTH FROM p.recorded_at) = 12 AND ${Number(month)} = 12 AND
+            (
+              (EXTRACT(YEAR FROM p.recorded_at) = ${Number(year)} AND EXTRACT(MONTH FROM p.recorded_at) = 12)
+              OR
+              (EXTRACT(YEAR FROM p.recorded_at) = ${Number(year)} + 1 AND EXTRACT(MONTH FROM p.recorded_at) = 1 AND EXTRACT(DAY FROM p.recorded_at) = 1)
+            )
+          )
+          OR
+          (
+            EXTRACT(MONTH FROM p.recorded_at) <> 12 AND
+            EXTRACT(YEAR FROM p.recorded_at) = ${Number(month) === 12 ? Number(year) + 1 : Number(year)} AND
+            EXTRACT(MONTH FROM p.recorded_at) = ${Number(month) === 12 ? 1 : Number(month) + 1} AND
+            EXTRACT(DAY FROM p.recorded_at) = 1
+          )
+        GROUP BY day
+        HAVING
+          SUM(p.wastewater_pump_building1) IS NOT NULL AND
+          SUM(p.wastewater_pump_building2) IS NOT NULL AND
+          SUM(p.treatment_pond) IS NOT NULL
+      )
+      
+      SELECT *
+      FROM (
+        SELECT
+          day,
+          ROUND((
+            CASE
+              WHEN LEAD(wastewater_pump_building1) OVER (ORDER BY day) IS NULL THEN NULL
+              WHEN LEAD(wastewater_pump_building1) OVER (ORDER BY day) < wastewater_pump_building1 THEN
+                LEAD(wastewater_pump_building1) OVER (ORDER BY day) + wastewater_pump_building1
+              ELSE
+                LEAD(wastewater_pump_building1) OVER (ORDER BY day) - wastewater_pump_building1
+            END
+          )::numeric, 2) AS wastewater_pump_building1,
+      
+          ROUND((
+            CASE
+              WHEN LEAD(wastewater_pump_building2) OVER (ORDER BY day) IS NULL THEN NULL
+              WHEN LEAD(wastewater_pump_building2) OVER (ORDER BY day) < wastewater_pump_building2 THEN
+                LEAD(wastewater_pump_building2) OVER (ORDER BY day) + wastewater_pump_building2
+              ELSE
+                LEAD(wastewater_pump_building2) OVER (ORDER BY day) - wastewater_pump_building2
+            END
+          )::numeric, 2) AS wastewater_pump_building2,
+      
+          ROUND((
+            CASE
+              WHEN LEAD(treatment_pond) OVER (ORDER BY day) IS NULL THEN NULL
+              WHEN LEAD(treatment_pond) OVER (ORDER BY day) < treatment_pond THEN
+                LEAD(treatment_pond) OVER (ORDER BY day) + treatment_pond
+              ELSE
+                LEAD(treatment_pond) OVER (ORDER BY day) - treatment_pond
+            END
+          )::numeric, 2) AS treatment_pond
+        FROM daily_data
+      ) AS result
+      WHERE
+        wastewater_pump_building1 IS NOT NULL AND
+        wastewater_pump_building2 IS NOT NULL AND
+        treatment_pond IS NOT NULL
+      ORDER BY day;
+      
+      
       `;
       return NextResponse.json(data);
     }

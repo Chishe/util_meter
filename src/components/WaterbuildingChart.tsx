@@ -51,33 +51,37 @@ export function WaterbuildingChart({
             {
               label: "น้ำดื่ม",
               data: drinking_water,
-              backgroundColor: randomColor(),
+              backgroundColor: '#4C9FEC',
             },
             {
               label: "น้ำแอร์รังผึ้งอาคาร 1",
               data: air_cooling_water_building1,
-              backgroundColor: randomColor(),
+              backgroundColor: '#7ED6A2',
             },
             {
               label: "น้ำแอร์รังผึ้งอาคาร 2",
               data: air_cooling_water_building2,
-              backgroundColor: randomColor(),
+              backgroundColor: '#A29BFE',
             },
             {
               label: "น้ำใช้อาคาร 1",
               data: water_usage_building1,
-              backgroundColor: randomColor(),
+              backgroundColor: '#FFB085',
             },
             {
               label: "น้ำใช้อาคาร 2",
               data: water_usage_building2,
-              backgroundColor: randomColor(),
+              backgroundColor: '#778CA3',
             },
           ],
         }}
         options={{
           responsive: true,
           maintainAspectRatio: false,
+          interaction:{
+            mode:'index',
+            intersect:false
+          },
           plugins: {
             title: {
               display: true,
@@ -92,6 +96,10 @@ export function WaterbuildingChart({
               labels: {
                 color: "#fff", // ทำให้ legend เป็นสีขาว
               },
+            },
+            tooltip:{
+              mode:'index',
+              intersect:false,
             },
           },
           scales: {
