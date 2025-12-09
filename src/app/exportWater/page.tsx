@@ -63,8 +63,8 @@ export default function Page() {
           label,
           water_in: parseFloat(item.water_in ?? 0),
           water_out: parseFloat(item.water_out ?? 0),
-          reused_treated_water: parseFloat(item.reused_treated_water ?? 0),
-          water_out_plus_reused: parseFloat(item.water_out_plus_reused ?? 0),
+          reused_treated_water: parseFloat(item.water_reused ?? 0),
+          water_out_plus_reused: parseFloat(item.waterOutPlusReused ?? 0),
         };
       });
 

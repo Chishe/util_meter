@@ -83,3 +83,25 @@ model AlarmLog {
 
   @@map("alarm_log")
 }
+
+model WaterLog10Min {
+  id          Int       @id @default(autoincrement())
+  meter_id    String    @db.VarChar(20)
+  datetime    DateTime  @db.Timestamptz
+  total_m3    Float?    @db.Numeric(12,3)
+  diff_m3     Float?    @db.Numeric(12,3)
+  remark_code String    @db.VarChar(20)
+
+  @@map("water_log_10min")
+}
+
+model PowerLog10Min {
+  id          Int       @id @default(autoincrement())
+  meter_id    String    @db.VarChar(20)
+  datetime    DateTime  @db.Timestamptz
+  total_kwh   Float?    @db.Numeric(14,3)
+  diff_kwh    Float?    @db.Numeric(14,3)
+  remark_code String    @db.VarChar(20)
+
+  @@map("power_log_10min")
+}

@@ -49,7 +49,7 @@ export default function Page() {
       <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/layout-treatment-water.png')] bg-no-repeat bg-center bg-contain" />
 
-        <div className="absolute top-[25%] left-[72%]">
+        <div className="absolute top-[27%] left-[72%]">
           <Button
             onClick={() => goToPage("/wastewaterPumpBuilding2")}
             className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800"
@@ -103,7 +103,7 @@ export default function Page() {
             </span>
           </Button>
         </div>
-        <div className="absolute top-[40%] left-[63.7%]">
+        <div className="absolute top-[41%] left-[67%]">
           <Button
             onClick={() => goToPage("/reusedTreatedWater")}
             className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800"

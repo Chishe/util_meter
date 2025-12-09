@@ -29,18 +29,18 @@ const randomColor = () => {
 };
 export function WaterbuildingChart({
   labels,
-  drinking_water,
-  air_cooling_water_building1,
-  air_cooling_water_building2,
-  water_usage_building1,
-  water_usage_building2,
+  water_drinking,
+  water_bldg1,
+  water_bldg2,
+  water_usage1,
+  water_usage2,
 }: {
   labels: string[];
-  drinking_water: number[];
-  air_cooling_water_building1: number[];
-  air_cooling_water_building2: number[];
-  water_usage_building1: number[];
-  water_usage_building2: number[];
+  water_drinking: number[];
+  water_bldg1: number[];
+  water_bldg2: number[];
+  water_usage1: number[];
+  water_usage2: number[];
 }) {
   return (
     <div className="w-[1200px] h-[400px]">
@@ -50,27 +50,27 @@ export function WaterbuildingChart({
           datasets: [
             {
               label: "น้ำดื่ม",
-              data: drinking_water,
+              data: water_drinking,
               backgroundColor: '#4C9FEC',
             },
             {
               label: "น้ำแอร์รังผึ้งอาคาร 1",
-              data: air_cooling_water_building1,
+              data: water_bldg1,
               backgroundColor: '#7ED6A2',
             },
             {
               label: "น้ำแอร์รังผึ้งอาคาร 2",
-              data: air_cooling_water_building2,
+              data: water_bldg2,
               backgroundColor: '#A29BFE',
             },
             {
               label: "น้ำใช้อาคาร 1",
-              data: water_usage_building1,
+              data: water_usage1,
               backgroundColor: '#FFB085',
             },
             {
               label: "น้ำใช้อาคาร 2",
-              data: water_usage_building2,
+              data: water_usage2,
               backgroundColor: '#778CA3',
             },
           ],

@@ -45,7 +45,7 @@ export default function Page() {
       <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/layout-water-usage.png')] bg-no-repeat bg-center bg-contain" />
 
-        <div className="absolute top-[22%] left-[25%]">
+        <div className="absolute top-[29.2%] left-[31.2%]">
           <Button
             onClick={() => goToPage("/airCoolingWaterBuilding1")}
             className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800"
@@ -56,7 +56,7 @@ export default function Page() {
           </Button>
         </div>
 
-        <div className="absolute top-[12%] left-[35%]">
+        <div className="absolute top-[36.3%] left-[34.3%]">
           <Button
             onClick={() => goToPage("/waterUsageBuilding1")}
             className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800"
@@ -67,7 +67,7 @@ export default function Page() {
           </Button>
         </div>
 
-        <div className="absolute top-[22%] left-[60%]">
+        <div className="absolute top-[28%] left-[57%]">
           <Button
             onClick={() => goToPage("/airCoolingWaterBuilding2")}
             className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800"
@@ -78,7 +78,7 @@ export default function Page() {
           </Button>
         </div>
 
-        <div className="absolute top-[22%] left-[75%]">
+        <div className="absolute top-[28%] left-[72%]">
           <Button
             onClick={() => goToPage("/waterUsageBuilding2")}
             className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800"
@@ -89,7 +89,7 @@ export default function Page() {
           </Button>
         </div>
 
-        <div className="absolute top-[85%] left-[66%]">
+        <div className="absolute top-[77%] left-[67%]">
           <Button
             onClick={() => goToPage("/drinkingWater")}
             className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800"

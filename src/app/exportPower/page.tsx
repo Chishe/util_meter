@@ -62,14 +62,14 @@ export default function Page() {
         return {
           label,
           wastewater_pump_building1: parseFloat(
-            item.wastewater_pump_building1 ?? 0
+            item.pump_building1 ?? 0
           ),
           wastewater_pump_building2: parseFloat(
-            item.wastewater_pump_building2 ?? 0
+            item.pump_building2 ?? 0
           ),
           treatment_pond: parseFloat(item.treatment_pond ?? 0),
           wastewater_pump_building2_plus_reused: parseFloat(
-            item.wastewater_pump_building2_plus_reused ?? 0
+            item.treatment_pond ?? 0
           ),
         };
       });

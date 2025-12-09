@@ -15,11 +15,11 @@ type ReportType = "yearly" | "monthly" | "daily";
 
 interface WaterData {
   label: string;
-  drinking_water: number;
-  air_cooling_water_building1: number;
-  air_cooling_water_building2: number;
-  water_usage_building1: number;
-  water_usage_building2: number;
+  water_drinking: number;
+  water_bldg1: number;
+  water_bldg2: number;
+  water_usage1: number;
+  water_usage2: number;
 }
 
 export default function Page() {
@@ -62,15 +62,15 @@ export default function Page() {
 
         return {
           label,
-          drinking_water: parseFloat(item.drinking_water ?? 0),
-          air_cooling_water_building1: parseFloat(
-            item.air_cooling_water_building1 ?? 0
+          water_drinking: parseFloat(item.water_drinking ?? 0),
+          water_bldg1: parseFloat(
+            item.water_bldg1 ?? 0
           ),
-          air_cooling_water_building2: parseFloat(
-            item.air_cooling_water_building2 ?? 0
+          water_bldg2: parseFloat(
+            item.water_bldg2 ?? 0
           ),
-          water_usage_building1: parseFloat(item.water_usage_building1 ?? 0),
-          water_usage_building2: parseFloat(item.water_usage_building2 ?? 0),
+          water_usage1: parseFloat(item.water_usage1 ?? 0),
+          water_usage2: parseFloat(item.water_usage2 ?? 0),
         };
       });
 
@@ -85,63 +85,63 @@ export default function Page() {
       "ช่วงเวลา,น้ำดื่ม,น้ำแอร์รังผึ้งอาคาร 1,น้ำแอร์รังผึ้งอาคาร 2,น้ำใช้อาคาร 1,น้ำใช้อาคาร 2";
     const rows = data.map(
       (d) =>
-        `${d.label},${d.drinking_water},${d.air_cooling_water_building1},${d.water_usage_building2},${d.water_usage_building1},${d.air_cooling_water_building2}`
+        `${d.label},${d.water_drinking},${d.water_bldg1},${d.water_usage2},${d.water_usage1},${d.water_bldg2}`
     );
 
     const avg = {
       label: "AVG",
-      drinking_water:
-        data.reduce((sum, d) => sum + d.drinking_water, 0) / data.length,
-      air_cooling_water_building1:
-        data.reduce((sum, d) => sum + d.air_cooling_water_building1, 0) /
+      water_drinking:
+        data.reduce((sum, d) => sum + d.water_drinking, 0) / data.length,
+      water_bldg1:
+        data.reduce((sum, d) => sum + d.water_bldg1, 0) /
         data.length,
-      air_cooling_water_building2:
-        data.reduce((sum, d) => sum + d.air_cooling_water_building2, 0) /
+      water_bldg2:
+        data.reduce((sum, d) => sum + d.water_bldg2, 0) /
         data.length,
-      water_usage_building1:
-        data.reduce((sum, d) => sum + d.water_usage_building1, 0) / data.length,
-      water_usage_building2:
-        data.reduce((sum, d) => sum + d.water_usage_building2, 0) / data.length,
+      water_usage1:
+        data.reduce((sum, d) => sum + d.water_usage1, 0) / data.length,
+      water_usage2:
+        data.reduce((sum, d) => sum + d.water_usage2, 0) / data.length,
     };
 
     const sum = {
       label: "SUM",
-      drinking_water: data.reduce((sum, d) => sum + d.drinking_water, 0),
-      air_cooling_water_building1: data.reduce(
-        (sum, d) => sum + d.air_cooling_water_building1,
+      water_drinking: data.reduce((sum, d) => sum + d.water_drinking, 0),
+      water_bldg1: data.reduce(
+        (sum, d) => sum + d.water_bldg1,
         0
       ),
-      air_cooling_water_building2: data.reduce(
-        (sum, d) => sum + d.air_cooling_water_building2,
+      water_bldg2: data.reduce(
+        (sum, d) => sum + d.water_bldg2,
         0
       ),
-      water_usage_building1: data.reduce(
-        (sum, d) => sum + d.water_usage_building1,
+      water_usage1: data.reduce(
+        (sum, d) => sum + d.water_usage1,
         0
       ),
-      water_usage_building2: data.reduce(
-        (sum, d) => sum + d.water_usage_building2,
+      water_usage2: data.reduce(
+        (sum, d) => sum + d.water_usage2,
         0
       ),
     };
 
     rows.push(
-      `${avg.label},${avg.drinking_water.toFixed(
+      `${avg.label},${avg.water_drinking.toFixed(
         2
-      )},${avg.air_cooling_water_building1.toFixed(
+      )},${avg.water_bldg1.toFixed(
         2
-      )},${avg.air_cooling_water_building2.toFixed(
+      )},${avg.water_bldg2.toFixed(
         2
-      )},${avg.water_usage_building1.toFixed(2)}`,
-      `${sum.label},${sum.drinking_water.toFixed(
+      )},${avg.water_usage1.toFixed(2)}`,
+      `${sum.label},${sum.water_drinking.toFixed(
         2
-      )},${sum.air_cooling_water_building1.toFixed(
+      )},${sum.water_bldg1.toFixed(
         2
-      )},${sum.air_cooling_water_building2.toFixed(
+      )},${sum.water_bldg2.toFixed(
         2
-      )},${sum.water_usage_building1.toFixed(
+      )},${sum.water_usage1.toFixed(
         2
-      )},${sum.water_usage_building2.toFixed(2)}`
+      )},${sum.water_usage2.toFixed(2)}`
     );
 
     const csv = [headers, ...rows].join("\n");
@@ -228,15 +228,15 @@ export default function Page() {
       <div className="flex justify-center w-full scroll-wrapper rounded-md shadow bg-zinc-900">
         <WaterbuildingChart
           labels={data.map((d) => d.label)}
-          drinking_water={data.map((d) => d.drinking_water)}
-          air_cooling_water_building1={data.map(
-            (d) => d.air_cooling_water_building1
+          water_drinking={data.map((d) => d.water_drinking)}
+          water_bldg1={data.map(
+            (d) => d.water_bldg1
           )}
-          air_cooling_water_building2={data.map(
-            (d) => d.air_cooling_water_building2
+          water_bldg2={data.map(
+            (d) => d.water_bldg2
           )}
-          water_usage_building1={data.map((d) => d.water_usage_building1)}
-          water_usage_building2={data.map((d) => d.water_usage_building2)}
+          water_usage1={data.map((d) => d.water_usage1)}
+          water_usage2={data.map((d) => d.water_usage2)}
         />
       </div>
       <div className="overflow-auto">
@@ -261,19 +261,19 @@ export default function Page() {
               <tr key={idx} className="border-t">
                 <td className="px-4 py-2 text-center">{d.label}</td>
                 <td className="px-4 py-2 text-center">
-                  {d.drinking_water.toFixed(2)}
+                  {d.water_drinking.toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {d.air_cooling_water_building1.toFixed(2)}
+                  {d.water_bldg1.toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {d.water_usage_building2.toFixed(2)}
+                  {d.water_usage2.toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {d.water_usage_building1.toFixed(2)}
+                  {d.water_usage1.toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {d.air_cooling_water_building2.toFixed(2)}
+                  {d.water_bldg2.toFixed(2)}
                 </td>
               </tr>
             ))}
@@ -282,14 +282,14 @@ export default function Page() {
               <td className="px-4 py-2 text-center">AVG</td>
               <td className="px-4 py-2 text-center">
                 {(
-                  data.reduce((sum, d) => sum + d.drinking_water, 0) /
+                  data.reduce((sum, d) => sum + d.water_drinking, 0) /
                   data.length
                 ).toFixed(2)}
               </td>
               <td className="px-4 py-2 text-center">
                 {(
                   data.reduce(
-                    (sum, d) => sum + d.air_cooling_water_building1,
+                    (sum, d) => sum + d.water_bldg1,
                     0
                   ) / data.length
                 ).toFixed(2)}
@@ -297,20 +297,20 @@ export default function Page() {
               <td className="px-4 py-2 text-center">
                 {(
                   data.reduce(
-                    (sum, d) => sum + d.air_cooling_water_building2,
+                    (sum, d) => sum + d.water_bldg2,
                     0
                   ) / data.length
                 ).toFixed(2)}
               </td>
               <td className="px-4 py-2 text-center">
                 {(
-                  data.reduce((sum, d) => sum + d.water_usage_building1, 0) /
+                  data.reduce((sum, d) => sum + d.water_usage1, 0) /
                   data.length
                 ).toFixed(2)}
               </td>
               <td className="px-4 py-2 text-center">
                 {(
-                  data.reduce((sum, d) => sum + d.water_usage_building2, 0) /
+                  data.reduce((sum, d) => sum + d.water_usage2, 0) /
                   data.length
                 ).toFixed(2)}
               </td>
@@ -319,26 +319,26 @@ export default function Page() {
             <tr className="border-t bg-green-600 text-white font-semibold">
               <td className="px-4 py-2 text-center">SUM</td>
               <td className="px-4 py-2 text-center">
-                {data.reduce((sum, d) => sum + d.drinking_water, 0).toFixed(2)}
+                {data.reduce((sum, d) => sum + d.water_drinking, 0).toFixed(2)}
               </td>
               <td className="px-4 py-2 text-center">
                 {data
-                  .reduce((sum, d) => sum + d.air_cooling_water_building1, 0)
+                  .reduce((sum, d) => sum + d.water_bldg1, 0)
                   .toFixed(2)}
               </td>
               <td className="px-4 py-2 text-center">
                 {data
-                  .reduce((sum, d) => sum + d.air_cooling_water_building2, 0)
+                  .reduce((sum, d) => sum + d.water_bldg2, 0)
                   .toFixed(2)}
               </td>
               <td className="px-4 py-2 text-center rounded-br-sm">
                 {data
-                  .reduce((sum, d) => sum + d.water_usage_building1, 0)
+                  .reduce((sum, d) => sum + d.water_usage1, 0)
                   .toFixed(2)}
               </td>
               <td className="px-4 py-2 text-center rounded-br-sm">
                 {data
-                  .reduce((sum, d) => sum + d.water_usage_building2, 0)
+                  .reduce((sum, d) => sum + d.water_usage2, 0)
                   .toFixed(2)}
               </td>
             </tr>
